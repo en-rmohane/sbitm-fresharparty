@@ -64,7 +64,7 @@ class Event(db.Model):
     college_name = db.Column(db.String(200), default='Shri Balaji Institute of Technology & Management')
     college_short_name = db.Column(db.String(50), default='SBITM')
     college_logo = db.Column(db.String(255), default='/static/images/logo/sanskriti_logo.svg')
-    event_date = db.Column(db.String(100), default='November 28, 2026')
+    event_date = db.Column(db.String(100), default='November 19, 2026')
     event_time = db.Column(db.String(100), default='10:00 AM onwards')
     venue = db.Column(db.String(200), default='Grand Central Auditorium & Campus Lawns')
     organizer_details = db.Column(db.String(255), default='Student Council & Cultural Affairs Committee')

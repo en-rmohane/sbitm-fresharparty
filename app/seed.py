@@ -81,7 +81,7 @@ def seed_database(app):
             college_name="Shri Balaji Institute of Technology & Management",
             college_short_name="SBITM",
             college_logo="/static/images/logo/sanskriti_logo.svg",
-            event_date="November 28, 2026",
+            event_date="November 19, 2026",
             event_time="10:00 AM onwards",
             venue="Grand Central Auditorium & Campus Lawns",
             organizer_details="Student Council & Cultural Affairs Committee",

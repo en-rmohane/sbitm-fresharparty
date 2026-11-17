@@ -108,7 +108,7 @@ function initCountdownTimer() {
   const container = document.getElementById('eventCountdown');
   if (!container) return;
 
-  const targetDateStr = container.getAttribute('data-event-date') || 'November 28, 2026 10:00:00';
+  const targetDateStr = container.getAttribute('data-event-date') || 'November 19, 2026 10:00:00';
   const targetTime = new Date(targetDateStr).getTime();
 
   function update() {
