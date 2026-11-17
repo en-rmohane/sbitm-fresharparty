@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Faculty Blessing – Sanskriti 2026{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div class="festive-card p-4 p-md-5 text-center shine-effect">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+        <div class="ornament-corner-bl"></div>
+        <div class="ornament-corner-br"></div>
+
+        <div class="d-inline-flex align-items-center gap-2 mb-2">
+          <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 30px;" class="flicker-flame">
+          <span class="text-gold letter-spacing-2 small text-uppercase heading-cinzel">Official Verification Gateway</span>
+          <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 30px;" class="flicker-flame">
+        </div>
+
+        <h3 class="heading-cinzel gold-gradient-text fw-bold mb-1">
+          BLESSING VERIFICATION
+        </h3>
+        <p class="text-cream opacity-75 small mb-4">
+          Verified Digital Invitation Acknowledgment Record
+        </p>
+
+        <!-- QR Verification Badge -->
+        <div class="p-4 rounded-3 text-start mb-4" style="background: rgba(30, 8, 14, 0.9); border: 1.5px solid var(--border-gold);">
+          
+          <div class="d-flex justify-content-between align-items-center border-bottom border-gold pb-3 mb-3">
+            <div>
+              <span class="small text-muted d-block">Verification ID:</span>
+              <code class="text-gold fw-bold" style="font-size: 0.85rem;">{{ approval.approval_uuid }}</code>
+            </div>
+            <span class="badge-approved">
+              <i data-lucide="check-circle" style="width: 14px;" class="d-inline-block align-middle me-1"></i> Verified
+            </span>
+          </div>
+
+          <div class="mb-2">
+            <span class="small text-muted d-block">Faculty Dignitary:</span>
+            <h5 class="text-gold-light fw-bold mb-0 heading-playfair">{{ approval.faculty.full_display_name }}</h5>
+            <span class="small text-cream opacity-75">{{ approval.faculty.designation }}</span>
+          </div>
+
+          <div class="mb-2">
+            <span class="small text-muted d-block">Department:</span>
+            <strong class="text-cream">{{ approval.department.name }} ({{ approval.department.code }})</strong>
+          </div>
+
+          <div class="mb-2">
+            <span class="small text-muted d-block">Event Name:</span>
+            <strong class="text-gold">{{ approval.event.title }}</strong>
+          </div>
+
+          <div class="mb-2">
+            <span class="small text-muted d-block">Date &amp; Time of Blessing:</span>
+            <span class="text-cream">{{ approval.approval_time.strftime('%B %d, %Y at %I:%M %p') }}</span>
+          </div>
+
+          <div>
+            <span class="small text-muted d-block">Accredited Coordinator:</span>
+            <span class="text-cream">{{ approval.coordinator.full_name }}</span>
+          </div>
+
+        </div>
+
+        <!-- Privacy Assurance -->
+        <p class="small text-muted mb-4" style="font-size: 0.74rem;">
+          <i data-lucide="shield" style="width: 13px;" class="d-inline-block align-middle text-gold me-1"></i>
+          Privacy Guard: Biometric and signature representations are secured in the college vault and are not publicly exposed via this verification portal.
+        </p>
+
+        <a href="{{ url_for('departments.landing') }}" class="btn btn-gold btn-sm">
+          <i data-lucide="home" style="width: 15px;"></i> Return to Sanskriti 2026 Home
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

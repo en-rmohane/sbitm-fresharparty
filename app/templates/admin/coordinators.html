@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Coordinators – Sanskriti 2026 Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-gold-outline btn-sm">
+      <i data-lucide="arrow-left" style="width: 14px;"></i> Back to Command Center
+    </a>
+
+    <button type="button" class="btn btn-gold btn-sm" data-bs-toggle="modal" data-bs-target="#addCoordModal">
+      <i data-lucide="user-plus" style="width: 15px;"></i> Create Coordinator Account
+    </button>
+  </div>
+
+  <div class="festive-card p-4">
+    <div class="d-flex align-items-center gap-3 mb-4 border-bottom border-gold pb-3">
+      <div class="dept-icon-wrapper mb-0" style="width: 48px; height: 48px;">
+        <i data-lucide="smartphone"></i>
+      </div>
+      <div>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0">EVENT AMBASSADORS &amp; COORDINATORS</h3>
+        <span class="text-cream opacity-75 small">Authorized field agents collecting on-site faculty digital approvals</span>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
+        <thead>
+          <tr class="border-gold border-bottom text-gold-light small text-uppercase">
+            <th>Name</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Assigned Departments</th>
+            <th>Approvals Gathered</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in coordinators %}
+            <tr class="border-gold border-bottom border-opacity-25 small">
+              <td class="fw-bold text-cream">{{ user.full_name }}</td>
+              <td><code>@{{ user.username }}</code></td>
+              <td>
+                <span class="badge {% if user.role == 'admin' %}bg-danger{% else %}bg-primary{% endif %}">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td>
+                {% for d in user.assigned_departments %}
+                  <span class="badge bg-dark text-gold border border-gold me-1">{{ d.code }}</span>
+                {% else %}
+                  <span class="text-muted small">All Departments</span>
+                {% endfor %}
+              </td>
+              <td>
+                <span class="badge-festive">{{ user.approvals_collected.count() }} collected</span>
+              </td>
+              <td>
+                {% if user.is_active %}
+                  <span class="badge-approved small">Active</span>
+                {% else %}
+                  <span class="badge-pending small">Disabled</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if user.username != 'admin' %}
+                  <form method="POST" action="{{ url_for('admin.toggle_coordinator', user_id=user.id) }}" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-gold-outline btn-sm py-0 px-2" style="font-size: 0.78rem;">
+                      {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                    </button>
+                  </form>
+                {% else %}
+                  <span class="text-muted small">Super Root</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Coordinator Modal -->
+  <div class="modal fade" id="addCoordModal" tabindex="-1" aria-labelledby="addCoordModalLabel" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content festive-card" style="background: rgba(38, 10, 16, 0.98); border: 2px solid var(--antique-gold);">
+        <form method="POST" action="{{ url_for('admin.add_coordinator') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="modal-header border-bottom border-gold d-flex justify-content-between align-items-center">
+            <h5 class="modal-title heading-cinzel text-gold fw-bold mb-0" id="addCoordModalLabel">New Coordinator Account</h5>
+            <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('addCoordModal')).hide();">&times;</button>
+          </div>
+
+          <div class="modal-body py-4">
+            <div class="mb-3">
+              <label class="form-label text-gold-light small fw-bold">Full Name</label>
+              <input type="text" name="full_name" class="form-control form-sanskriti" placeholder="e.g. Priya Sharma" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-gold-light small fw-bold">Username</label>
+              <input type="text" name="username" class="form-control form-sanskriti" placeholder="e.g. coordinator3" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-gold-light small fw-bold">Email Address</label>
+              <input type="email" name="email" class="form-control form-sanskriti" placeholder="e.g. priya@college.edu" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-gold-light small fw-bold">Login Password</label>
+              <input type="password" name="password" class="form-control form-sanskriti" placeholder="Set temporary password" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-gold-light small fw-bold">Role Privilege</label>
+              <select name="role" class="form-select form-sanskriti">
+                <option value="coordinator">Event Coordinator (Mobile Approval Collector)</option>
+                <option value="admin">Administrator (Full Access)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer border-top border-gold">
+            <button type="button" class="btn btn-gold-outline btn-sm" data-bs-dismiss="modal" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('addCoordModal')).hide();">Cancel</button>
+            <button type="submit" class="btn btn-gold btn-sm">Create Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

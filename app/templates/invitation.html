@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Digital Invitation Card – {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+
+      <!-- Action Toolbar (Hidden during print) -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4 no-print">
+        <a href="{{ url_for('departments.landing') }}" class="btn btn-gold-outline btn-sm">
+          <i data-lucide="arrow-left" style="width: 15px;"></i> Back to Home
+        </a>
+
+        <div class="d-flex gap-2">
+          <button onclick="window.print()" class="btn btn-gold-outline btn-sm">
+            <i data-lucide="printer" style="width: 15px;"></i> Print Card
+          </button>
+          <a href="{{ url_for('reports.download_event_invitation_pdf') }}" class="btn btn-gold-outline btn-sm" target="_blank">
+            <i data-lucide="file-text" style="width: 15px;"></i> Download PDF
+          </a>
+          <button onclick="shareInvitation('{{ event.title }} Invitation', '{{ event.invitation_text }}', window.location.href)" class="btn btn-gold btn-sm">
+            <i data-lucide="share-2" style="width: 15px;"></i> Share
+          </button>
+        </div>
+      </div>
+
+      <!-- Royal Festive Card -->
+      <div class="invitation-royal-card text-center shine-effect">
+        <div class="card-inner-border">
+          
+          <!-- Traditional Corner Ornaments -->
+          <div class="ornament-corner-tl" style="width: 52px; height: 52px;"></div>
+          <div class="ornament-corner-tr" style="width: 52px; height: 52px;"></div>
+          <div class="ornament-corner-bl" style="width: 52px; height: 52px;"></div>
+          <div class="ornament-corner-br" style="width: 52px; height: 52px;"></div>
+
+          <!-- Auspicious Vedic Invocation -->
+          <div class="d-inline-flex align-items-center gap-2 mb-3">
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 36px;" class="flicker-flame">
+            <span class="text-saffron fw-bold letter-spacing-3 devanagari-font fs-6">॥ श्री गणेशाय नमः ॥</span>
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 36px;" class="flicker-flame">
+          </div>
+
+          <!-- Institution Name -->
+          <h5 class="heading-cinzel text-gold fw-bold letter-spacing-3 text-uppercase mb-2">
+            {{ event.college_name }}
+          </h5>
+          <p class="text-muted small letter-spacing-1 text-uppercase mb-4">
+            Cordially Requests the Honour of Your Presence
+          </p>
+
+          <!-- Core Invitation Invitation Opening -->
+          <p class="text-dark mx-auto mb-4" style="max-width: 620px; font-size: 1.15rem; line-height: 1.8; font-family: 'Playfair Display', serif;">
+            "{{ event.invitation_text }}"
+          </p>
+
+          <!-- Grand Event Title Seal -->
+          <div class="my-4 py-3" style="background: rgba(198, 161, 91, 0.08); border-top: 1px solid var(--border-gold); border-bottom: 1px solid var(--border-gold);">
+            <span class="heading-cinzel text-uppercase text-saffron letter-spacing-3 small fw-bold d-block mb-1">
+              Annual College Freshers Welcome
+            </span>
+            <h1 class="gold-gradient-text heading-cinzel display-4 fw-bold mb-1">
+              {{ event.title }}
+            </h1>
+            <p class="text-dark fst-italic mb-0" style="font-family: 'Playfair Display', serif; font-size: 1.1rem;">
+              "{{ event.tagline }}"
+            </p>
+          </div>
+
+          <!-- Event Logistics Details -->
+          <div class="row g-3 justify-content-center my-4 text-start">
+            <div class="col-sm-6 col-md-4">
+              <div class="p-3 rounded-3 h-100" style="background: rgba(198, 161, 91, 0.12); border: 1px solid var(--border-gold);">
+                <div class="d-flex align-items-center gap-2 text-gold mb-1">
+                  <i data-lucide="calendar" style="width: 18px;"></i>
+                  <span class="small text-uppercase fw-bold">Date</span>
+                </div>
+                <div class="text-dark fw-bold">{{ event.event_date }}</div>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4">
+              <div class="p-3 rounded-3 h-100" style="background: rgba(198, 161, 91, 0.12); border: 1px solid var(--border-gold);">
+                <div class="d-flex align-items-center gap-2 text-gold mb-1">
+                  <i data-lucide="clock" style="width: 18px;"></i>
+                  <span class="small text-uppercase fw-bold">Time</span>
+                </div>
+                <div class="text-dark fw-bold">{{ event.event_time }}</div>
+              </div>
+            </div>
+
+            <div class="col-sm-12 col-md-4">
+              <div class="p-3 rounded-3 h-100" style="background: rgba(198, 161, 91, 0.12); border: 1px solid var(--border-gold);">
+                <div class="d-flex align-items-center gap-2 text-gold mb-1">
+                  <i data-lucide="map-pin" style="width: 18px;"></i>
+                  <span class="small text-uppercase fw-bold">Venue</span>
+                </div>
+                <div class="text-dark fw-bold">{{ event.venue }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Closing Salutation -->
+          <div class="mt-4 pt-3 text-center">
+            <p class="text-dark small mb-1">
+              <strong>Organized With Deep Regard By:</strong>
+            </p>
+            <p class="text-gold fw-bold mb-3 heading-cinzel">
+              {{ event.organizer_details }}
+            </p>
+            <span class="badge px-3 py-2 text-uppercase letter-spacing-2" style="background: #3A1019; color: #DFBA73; border: 1px solid #C6A15B;">
+              Let's make this beginning memorable!
+            </span>
+          </div>
+
+          <!-- Bottom Diya Motif -->
+          <div class="mt-4">
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 42px;" class="flicker-flame">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

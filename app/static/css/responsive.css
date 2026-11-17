@@ -1,0 +1,118 @@
+/* ==========================================================================
+   SANSKRITI 2026 - Mobile First & Responsive Styles
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Navbar */
+  .navbar-brand img {
+    height: 38px;
+  }
+  
+  /* Envelope Stage */
+  .envelope-stage {
+    max-width: 320px;
+  }
+
+  .envelope-wrapper {
+    height: 220px;
+  }
+
+  .envelope-flap {
+    border-left-width: 160px;
+    border-right-width: 160px;
+    border-top-width: 110px;
+  }
+
+  .envelope-pocket {
+    border-left-width: 160px;
+    border-right-width: 160px;
+    border-bottom-width: 110px;
+    border-top-width: 110px;
+  }
+
+  .envelope-wax-seal {
+    width: 64px;
+    height: 64px;
+    top: 90px;
+  }
+
+  .envelope-letter {
+    height: 180px;
+    padding: 0.85rem;
+  }
+
+  .envelope-wrapper.open .envelope-letter {
+    transform: translateY(-60px);
+  }
+
+  /* Royal Invitation Card */
+  .invitation-royal-card {
+    padding: 1.5rem 1rem;
+    border-width: 6px;
+  }
+
+  .invitation-royal-card .card-inner-border {
+    padding: 1.2rem 0.8rem;
+  }
+
+  /* Countdown box */
+  .countdown-container {
+    gap: 8px;
+  }
+
+  .countdown-box {
+    min-width: 58px;
+    padding: 0.45rem 0.5rem;
+  }
+
+  .countdown-number {
+    font-size: 1.35rem;
+  }
+
+  /* Journey Nodes */
+  .journey-node {
+    width: 100px;
+    height: 100px;
+    font-size: 0.8rem;
+  }
+
+  /* Signature Canvas */
+  .signature-canvas {
+    height: 180px;
+  }
+
+  /* Camera preview */
+  .camera-preview-container {
+    max-width: 100%;
+  }
+
+  /* Approved Stamp Graphic */
+  .stamp-graphic {
+    max-width: 220px;
+  }
+}
+
+/* Print Friendly Styles for Physical Invitation or Report Printing */
+@media print {
+  body {
+    background: #FFF !important;
+    color: #000 !important;
+  }
+
+  .sanskriti-navbar, 
+  .btn, 
+  #particlesCanvas,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  .invitation-royal-card {
+    border: 3px solid #C6A15B !important;
+    box-shadow: none !important;
+    background: #FFF !important;
+    color: #000 !important;
+    page-break-inside: avoid;
+  }
+}
+

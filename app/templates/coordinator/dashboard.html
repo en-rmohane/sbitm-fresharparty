@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Coordinator Dashboard – {{ current_user.full_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Welcome Banner -->
+  <div class="festive-card p-4 mb-4">
+    <div class="ornament-corner-tl"></div>
+    <div class="ornament-corner-tr"></div>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="dept-icon-wrapper mb-0" style="width: 58px; height: 58px; font-size: 1.4rem;">
+          <i data-lucide="user-check"></i>
+        </div>
+        <div>
+          <span class="badge-festive small text-uppercase">Welcome Dignitary Coordinator</span>
+          <h2 class="heading-cinzel text-gold fw-bold mb-0">{{ current_user.full_name }}</h2>
+          <span class="text-cream opacity-75 small">Username: @{{ current_user.username }} • Role: Event Ambassador</span>
+        </div>
+      </div>
+
+      <div>
+        <a href="{{ url_for('departments.department_universe') }}" class="btn btn-gold">
+          <i data-lucide="plus-circle" style="width: 16px;"></i> Collect New Blessing
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-md-3">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">My Approvals Collected</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1">{{ my_approvals_count }}</h3>
+        <span class="text-muted small">Signatures recorded</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Assigned Departments</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1">{{ assigned_departments|length }}</h3>
+        <span class="text-muted small">Jurisdictions</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Campus Completion</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1">{{ overall_completion_pct }}%</h3>
+        <span class="text-muted small">{{ total_approved }} of {{ total_faculty }} received</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Target Approvals</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1">{{ total_pending }}</h3>
+        <span class="text-muted small">Remaining campus-wide</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assigned Departments Section -->
+  <div class="mb-4">
+    <h4 class="heading-cinzel text-gold fw-bold mb-3 d-flex align-items-center gap-2">
+      <i data-lucide="building" style="width: 20px;"></i> Departments Ready For Visit
+    </h4>
+
+    <div class="row g-3">
+      {% for dept in assigned_departments %}
+        {% set dept_approved = dept.approved_count(event.id) %}
+        {% set dept_total = dept.total_faculty_count() %}
+        <div class="col-md-6 col-lg-4">
+          <div class="festive-card p-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-dark text-gold border border-gold small">{{ dept.code }}</span>
+              <span class="text-cream small fw-bold">{{ dept_approved }} / {{ dept_total }} Approved</span>
+            </div>
+
+            <h5 class="heading-cinzel text-gold-light fw-bold mb-1">{{ dept.name }}</h5>
+            <p class="text-cream opacity-75 small mb-3 flex-grow-1">{{ dept.speciality }}</p>
+
+            <a href="{{ url_for('coordinator.faculty_selection', department_id=dept.id) }}" class="btn btn-gold-outline btn-sm w-100">
+              <i data-lucide="arrow-right-circle" style="width: 15px;"></i> Open Department Faculty List
+            </a>
+          </div>
+        </div>
+      {% else %}
+        <div class="col-12">
+          <div class="festive-card p-4 text-center">
+            <p class="text-cream mb-2">You currently have access to all campus departments.</p>
+            <a href="{{ url_for('departments.department_universe') }}" class="btn btn-gold btn-sm">
+              Explore All Departments
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Approvals Collected By This Coordinator -->
+  <div>
+    <h4 class="heading-cinzel text-gold fw-bold mb-3 d-flex align-items-center gap-2">
+      <i data-lucide="history" style="width: 20px;"></i> My Recent Blessings Collected
+    </h4>
+
+    <div class="festive-card p-3">
+      <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
+          <thead>
+            <tr class="border-gold border-bottom text-gold-light text-uppercase small">
+              <th>Time</th>
+              <th>Faculty Name</th>
+              <th>Department</th>
+              <th>Selfie / Signature</th>
+              <th>Blessing Message</th>
+              <th>Verification</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in recent_approvals %}
+              <tr class="border-gold border-bottom border-opacity-25">
+                <td class="small text-muted">{{ app.approval_time.strftime('%d %b, %I:%M %p') }}</td>
+                <td class="fw-bold text-gold-light">{{ app.faculty.full_display_name }}</td>
+                <td><span class="badge bg-dark text-gold border border-gold">{{ app.department.code }}</span></td>
+                <td>
+                  <span class="badge-approved small">
+                    <i data-lucide="check" style="width: 12px;"></i> Captured
+                  </span>
+                </td>
+                <td class="small text-cream">
+                  {% if app.message and app.message.message_text %}
+                    "{{ app.message.message_text[:45] }}..."
+                  {% else %}
+                    <span class="text-muted fst-italic">Standard Blessing</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="{{ url_for('approvals.approval_details', approval_id=app.id) }}" class="btn btn-gold-outline btn-sm py-0 px-2" style="font-size: 0.78rem;">
+                    View Record
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  You haven't recorded any faculty approvals yet. Visit a department to collect your first blessing!
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Faculty Directory – Sanskriti 2026 Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-gold-outline btn-sm">
+      <i data-lucide="arrow-left" style="width: 14px;"></i> Back to Command Center
+    </a>
+
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('reports.export_faculty_csv') }}" class="btn btn-gold-outline btn-sm">
+        <i data-lucide="download" style="width: 14px;"></i> Export CSV
+      </a>
+      <button type="button" class="btn btn-gold btn-sm" data-bs-toggle="modal" data-bs-target="#addFacultyModal">
+        <i data-lucide="user-plus" style="width: 15px;"></i> Add Professor / Dignitary
+      </button>
+    </div>
+  </div>
+
+  <div class="festive-card p-4">
+    <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-gold pb-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="dept-icon-wrapper mb-0" style="width: 48px; height: 48px;">
+          <i data-lucide="users"></i>
+        </div>
+        <div>
+          <h3 class="heading-cinzel text-gold fw-bold mb-0">FACULTY ROSTER</h3>
+          <span class="text-cream opacity-75 small">Total {{ faculties|length }} faculty members across {{ departments|length }} academic departments</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
+        <thead>
+          <tr class="border-gold border-bottom text-gold-light small text-uppercase">
+            <th>Name &amp; Salutation</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Cabin / Room</th>
+            <th>Contact</th>
+            <th>Approval Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fac in faculties %}
+            {% set has_app = fac.has_approved(event.id) %}
+            <tr class="border-gold border-bottom border-opacity-25 small">
+              <td class="fw-bold text-gold-light">{{ fac.full_display_name }}</td>
+              <td><span class="badge bg-dark text-gold border border-gold">{{ fac.department.code }}</span></td>
+              <td class="text-cream">{{ fac.designation }}</td>
+              <td class="text-muted">{{ fac.cabin_number or '—' }}</td>
+              <td class="text-muted">{{ fac.email or '—' }}</td>
+              <td>
+                {% if has_app %}
+                  <span class="badge-approved small">
+                    <i data-lucide="check" style="width: 12px;"></i> Approved
+                  </span>
+                {% else %}
+                  <span class="badge-pending small">
+                    <i data-lucide="clock" style="width: 12px;"></i> Pending
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="POST" action="{{ url_for('admin.delete_faculty', faculty_id=fac.id) }}" onsubmit="return confirm('Are you sure you want to remove this faculty record?');" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.78rem;">
+                    <i data-lucide="trash-2" style="width: 12px;"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Faculty Modal -->
+  <div class="modal fade" id="addFacultyModal" tabindex="-1" aria-labelledby="addFacultyModalLabel" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content festive-card" style="background: rgba(38, 10, 16, 0.98); border: 2px solid var(--antique-gold);">
+        <form method="POST" action="{{ url_for('admin.add_faculty') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="modal-header border-bottom border-gold d-flex justify-content-between align-items-center">
+            <h5 class="modal-title heading-cinzel text-gold fw-bold mb-0" id="addFacultyModalLabel">Add Faculty Member</h5>
+            <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('addFacultyModal')).hide();">&times;</button>
+          </div>
+
+          <div class="modal-body py-4">
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label text-gold-light small fw-bold">Salutation</label>
+                <select name="salutation" class="form-select form-sanskriti">
+                  <option value="Prof.">Prof.</option>
+                  <option value="Dr.">Dr.</option>
+                  <option value="Assoc. Prof.">Assoc. Prof.</option>
+                  <option value="Asst. Prof.">Asst. Prof.</option>
+                  <option value="Er.">Er.</option>
+                  <option value="Mr.">Mr.</option>
+                  <option value="Ms.">Ms.</option>
+                </select>
+              </div>
+
+              <div class="col-md-9">
+                <label class="form-label text-gold-light small fw-bold">Full Name</label>
+                <input type="text" name="name" class="form-control form-sanskriti" placeholder="e.g. Ramesh Kumar Sharma" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-gold-light small fw-bold">Department</label>
+                <select name="department_id" class="form-select form-sanskriti" required>
+                  {% for dept in departments %}
+                    <option value="{{ dept.id }}">{{ dept.name }} ({{ dept.code }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label text-gold-light small fw-bold">Designation</label>
+                <input type="text" name="designation" class="form-control form-sanskriti" placeholder="e.g. Associate Professor &amp; HOD" required>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label text-gold-light small fw-bold">Cabin / Room No.</label>
+                <input type="text" name="cabin_number" class="form-control form-sanskriti" placeholder="e.g. Block-B, Room 304">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-gold-light small fw-bold">Email Address</label>
+                <input type="email" name="email" class="form-control form-sanskriti" placeholder="e.g. ramesh.sharma@college.edu">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-gold-light small fw-bold">Phone Number</label>
+                <input type="text" name="phone" class="form-control form-sanskriti" placeholder="e.g. +91 9876543210">
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer border-top border-gold">
+            <button type="button" class="btn btn-gold-outline btn-sm" data-bs-dismiss="modal" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('addFacultyModal')).hide();">Cancel</button>
+            <button type="submit" class="btn btn-gold btn-sm">Save Faculty Dignitary</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

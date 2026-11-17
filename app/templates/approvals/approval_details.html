@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Approval Record #{{ approval.id }} – {{ approval.faculty.full_display_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Breadcrumbs -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    {% if current_user.is_admin %}
+      <a href="{{ url_for('admin.approvals') }}" class="btn btn-gold-outline btn-sm">
+        <i data-lucide="arrow-left" style="width: 14px;"></i> Admin Approvals
+      </a>
+    {% else %}
+      <a href="{{ url_for('coordinator.dashboard') }}" class="btn btn-gold-outline btn-sm">
+        <i data-lucide="arrow-left" style="width: 14px;"></i> Coordinator Hub
+      </a>
+    {% endif %}
+
+    <div>
+      <a href="{{ url_for('reports.download_faculty_card_pdf', approval_id=approval.id) }}" class="btn btn-gold btn-sm" target="_blank">
+        <i data-lucide="download" style="width: 14px;"></i> Download Certificate PDF
+      </a>
+      {% if current_user.is_admin %}
+        <button type="button" class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#resetModal">
+          <i data-lucide="rotate-ccw" style="width: 14px;"></i> Reset Approval
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Main Record Card -->
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="festive-card p-4">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+
+        <div class="d-flex justify-content-between align-items-center border-bottom border-gold pb-3 mb-3">
+          <div>
+            <span class="badge-festive small text-uppercase mb-1">Official Approval Archive</span>
+            <h3 class="heading-cinzel text-gold fw-bold mb-0">
+              {{ approval.faculty.full_display_name }}
+            </h3>
+            <span class="text-cream opacity-75 small">
+              {{ approval.faculty.designation }} • {{ approval.department.name }}
+            </span>
+          </div>
+          <div>
+            <span class="badge-approved fs-6">
+              <i data-lucide="check-circle" style="width: 16px;" class="d-inline-block align-middle me-1"></i> Active Record
+            </span>
+          </div>
+        </div>
+
+        <!-- Biometrics & Media Row -->
+        <div class="row g-3 mb-4">
+          <!-- Selfie Card -->
+          <div class="col-md-6">
+            <div class="p-3 rounded text-center h-100" style="background: rgba(30, 8, 14, 0.85); border: 1.5px solid var(--border-gold);">
+              <span class="text-gold-light small fw-bold d-block mb-2">Faculty Selfie:</span>
+              {% if approval.selfie %}
+                <img src="{{ url_for('approvals.view_selfie', approval_id=approval.id) }}" alt="Selfie" class="img-fluid rounded border border-gold" style="max-height: 200px; object-fit: cover;">
+                <div class="small text-muted mt-2">
+                  Capture Method: <code class="text-gold">{{ approval.selfie.capture_method }}</code>
+                </div>
+              {% else %}
+                <div class="text-muted py-4">No photo captured</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Signature Card -->
+          <div class="col-md-6">
+            <div class="p-3 rounded text-center h-100" style="background: rgba(255, 255, 255, 0.95); border: 1.5px solid var(--border-gold);">
+              <span class="text-dark small fw-bold d-block mb-2">Digital Signature:</span>
+              {% if approval.signature %}
+                <img src="{{ url_for('approvals.view_signature', approval_id=approval.id) }}" alt="Signature" class="img-fluid" style="max-height: 180px; object-fit: contain;">
+                <div class="small text-muted mt-2">
+                  Verified HTML5 Canvas stroke capture
+                </div>
+              {% else %}
+                <div class="text-muted py-4">No signature captured</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Faculty Blessing Message -->
+        <div class="p-3 rounded mb-4" style="background: rgba(198, 161, 91, 0.1); border-left: 3px solid var(--antique-gold);">
+          <span class="text-gold-light small fw-bold text-uppercase d-block mb-1">Faculty Words of Blessing:</span>
+          {% if approval.message and approval.message.message_text %}
+            <p class="text-cream fst-italic mb-1" style="font-family: 'Playfair Display', serif; font-size: 1.05rem;">
+              "{{ approval.message.message_text }}"
+            </p>
+          {% else %}
+            <p class="text-muted fst-italic mb-1">Standard college welcome blessings conveyed.</p>
+          {% endif %}
+
+          <div class="small mt-2">
+            <span class="badge {% if approval.consent and approval.consent.public_display_consented %}badge-festive{% else %}badge-pending{% endif %}">
+              Public Wall Display: {% if approval.consent and approval.consent.public_display_consented %}Consented{% else %}Private{% endif %}
+            </span>
+          </div>
+        </div>
+
+        <!-- Audit History -->
+        <h5 class="heading-cinzel text-gold fw-bold mb-2">Audit History &amp; Timeline</h5>
+        <div class="table-responsive">
+          <table class="table table-dark table-sm mb-0 bg-transparent">
+            <thead>
+              <tr class="text-gold-light border-gold border-bottom small">
+                <th>Timestamp</th>
+                <th>Action</th>
+                <th>Actor</th>
+                <th>Reason / Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for h in approval.history %}
+                <tr class="border-gold border-bottom border-opacity-25 small">
+                  <td>{{ h.timestamp.strftime('%d %b %Y, %I:%M %p') }}</td>
+                  <td><span class="badge bg-secondary">{{ h.action }}</span></td>
+                  <td>{{ h.performed_by.full_name if h.performed_by else 'System' }}</td>
+                  <td>{{ h.reason or 'Recorded successfully' }}</td>
+                </tr>
+              {% else %}
+                <tr class="small">
+                  <td>{{ approval.approval_time.strftime('%d %b %Y, %I:%M %p') }}</td>
+                  <td><span class="badge bg-success">submitted</span></td>
+                  <td>{{ approval.coordinator.full_name }}</td>
+                  <td>Initial submission via mobile</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Column: Meta Info & QR Code -->
+    <div class="col-lg-4">
+      <!-- QR Code Box -->
+      <div class="festive-card p-4 text-center mb-4">
+        <h6 class="heading-cinzel text-gold fw-bold mb-2">Verification QR Code</h6>
+        <div class="bg-white p-3 rounded d-inline-block my-2 border border-gold">
+          <img src="{{ url_for('approvals.approval_qr_image', approval_uuid=approval.approval_uuid) }}" alt="QR Code" style="width: 160px; height: 160px;">
+        </div>
+        <div class="small text-muted mt-2">
+          Scan to verify authenticity on any device
+        </div>
+        <a href="{{ url_for('approvals.verify_approval', approval_uuid=approval.approval_uuid) }}" target="_blank" class="btn btn-gold-outline btn-sm mt-2 w-100">
+          Open Public Verification Link
+        </a>
+      </div>
+
+      <!-- Metadata Box -->
+      <div class="festive-card p-4">
+        <h6 class="heading-cinzel text-gold fw-bold mb-3 border-bottom border-gold pb-2">Session Metadata</h6>
+        
+        <div class="small mb-2">
+          <span class="text-muted d-block">Coordinator:</span>
+          <strong class="text-cream">{{ approval.coordinator.full_name }} (@{{ approval.coordinator.username }})</strong>
+        </div>
+
+        <div class="small mb-2">
+          <span class="text-muted d-block">Recorded On:</span>
+          <strong class="text-cream">{{ approval.approval_time.strftime('%A, %B %d, %Y at %I:%M:%S %p') }}</strong>
+        </div>
+
+        <div class="small mb-2">
+          <span class="text-muted d-block">IP Address:</span>
+          <code class="text-gold">{{ approval.ip_address or '127.0.0.1' }}</code>
+        </div>
+
+        <div class="small">
+          <span class="text-muted d-block">Device Signature:</span>
+          <span class="text-cream opacity-75" style="font-size: 0.74rem;">{{ approval.user_agent or 'Mobile Webkit Browser' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Reset Modal -->
+  {% if current_user.is_admin %}
+    <div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true" data-bs-backdrop="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content festive-card" style="background: rgba(38, 10, 16, 0.98); border: 2px solid var(--antique-gold);">
+          <form method="POST" action="{{ url_for('admin.reset_approval', approval_id=approval.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="modal-header border-bottom border-gold d-flex justify-content-between align-items-center">
+              <h5 class="modal-title heading-cinzel text-danger fw-bold mb-0" id="resetModalLabel">Reset Approval Record</h5>
+              <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('resetModal')).hide();">&times;</button>
+            </div>
+            <div class="modal-body py-4">
+              <p class="text-cream small">
+                Resetting this approval will allow the faculty member to be visited again by a coordinator. An audit log entry will be permanently created.
+              </p>
+              <div class="mb-3">
+                <label class="form-label text-gold-light small fw-bold">Reason for Reset (Required):</label>
+                <textarea name="reason" class="form-sanskriti w-100" rows="3" required placeholder="e.g. Faculty requested re-signature with alternate message..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer border-top border-gold">
+              <button type="button" class="btn btn-gold-outline btn-sm" data-bs-dismiss="modal" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('resetModal')).hide();">Cancel</button>
+              <button type="submit" class="btn btn-danger btn-sm">Confirm Reset &amp; Log</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+

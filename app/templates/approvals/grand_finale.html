@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Grand Finale – Every Blessing Received! | {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+  {% if is_completed %}
+    <!-- 100% CELEBRATION MODE -->
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+
+        <div class="festive-card p-4 p-md-5 shine-effect position-relative">
+          <div class="ornament-corner-tl" style="width: 56px; height: 56px;"></div>
+          <div class="ornament-corner-tr" style="width: 56px; height: 56px;"></div>
+          <div class="ornament-corner-bl" style="width: 56px; height: 56px;"></div>
+          <div class="ornament-corner-br" style="width: 56px; height: 56px;"></div>
+
+          <!-- Auspicious Emblem -->
+          <div class="d-inline-flex align-items-center gap-3 mb-3">
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 42px;" class="flicker-flame">
+            <span class="text-saffron fw-bold letter-spacing-3 fs-5 devanagari-font">॥ सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ॥</span>
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 42px;" class="flicker-flame">
+          </div>
+
+          <!-- Main Grand Finale Heading -->
+          <h1 class="gold-gradient-text heading-cinzel display-3 fw-bold mb-2">
+            EVERY BLESSING RECEIVED!
+          </h1>
+
+          <h4 class="heading-playfair text-gold-light fst-italic mb-4">
+            "With the blessings of our respected faculty, we are ready to welcome a new generation."
+          </h4>
+
+          <div class="my-4">
+            <img src="{{ url_for('static', filename='images/decorations/approved_stamp.svg') }}" alt="Sanctified Seal" style="max-width: 260px;" class="pulse-gold">
+          </div>
+
+          <p class="text-cream opacity-90 mx-auto fs-5 mb-4" style="max-width: 680px; line-height: 1.8;">
+            Every academic department and respected faculty member has officially acknowledged the invitation and showered their auspicious wishes upon the incoming batch of <strong>{{ event.title }}</strong>.
+          </p>
+
+          <!-- Completion Summary Grid -->
+          <div class="row g-3 justify-content-center text-start my-4">
+            <div class="col-md-4">
+              <div class="p-3 rounded-3" style="background: rgba(198, 161, 91, 0.15); border: 1.5px solid var(--antique-gold);">
+                <span class="text-gold-light small text-uppercase d-block mb-1">Total Faculty Blessings</span>
+                <h3 class="text-gold heading-cinzel fw-bold mb-0">{{ total_approved }} Blessings</h3>
+                <span class="text-muted small">100% Campus Attendance</span>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="p-3 rounded-3" style="background: rgba(198, 161, 91, 0.15); border: 1.5px solid var(--antique-gold);">
+                <span class="text-gold-light small text-uppercase d-block mb-1">Departments Represented</span>
+                <h3 class="text-gold heading-cinzel fw-bold mb-0">{{ total_departments }} Departments</h3>
+                <span class="text-muted small">All Academic Blocks</span>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="p-3 rounded-3" style="background: rgba(198, 161, 91, 0.15); border: 1.5px solid var(--antique-gold);">
+                <span class="text-gold-light small text-uppercase d-block mb-1">Completion Milestone</span>
+                <h3 class="text-gold heading-cinzel fw-bold mb-0">Sanctified</h3>
+                <span class="text-muted small">Ready For Freshers Gala</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- All Departments Tags -->
+          <div class="my-4">
+            <span class="text-gold-light small text-uppercase d-block mb-2 fw-bold">Blessings Received Across All Faculties:</span>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+              {% for dept in departments %}
+                <span class="badge px-3 py-2" style="background: rgba(45, 12, 19, 0.9); border: 1px solid var(--antique-gold); color: #FFEBB8; font-size: 0.85rem;">
+                  ✓ {{ dept.name }} ({{ dept.code }})
+                </span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-flex flex-wrap justify-content-center gap-3 mt-4 pt-2">
+            <a href="{{ url_for('reports.download_final_summary_pdf') }}" class="btn btn-gold btn-lg" target="_blank">
+              <i data-lucide="download" style="width: 20px;"></i> Download Official Summary PDF
+            </a>
+            <a href="{{ url_for('approvals.blessings_wall') }}" class="btn btn-gold-outline btn-lg">
+              <i data-lucide="heart" style="width: 20px;"></i> Explore Blessings Wall
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  {% else %}
+    <!-- IN-PROGRESS STATE -->
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="festive-card p-5 text-center">
+          <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 48px;" class="flicker-flame mb-3">
+          
+          <h2 class="heading-cinzel text-gold fw-bold mb-2">
+            THE SACRED PILGRIMAGE CONTINUES
+          </h2>
+          
+          <p class="text-cream opacity-80 mb-4">
+            We are well on our way to gathering every faculty blessing! The Grand Finale celebration will be sanctified once all required approvals are recorded.
+          </p>
+
+          <div class="p-4 rounded-3 mb-4" style="background: rgba(30, 8, 14, 0.8); border: 1px solid var(--border-gold);">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-gold-light fw-bold">Current Progress:</span>
+              <span class="text-gold heading-cinzel fs-4 fw-bold">{{ completion_pct }}%</span>
+            </div>
+            <div class="progress-sanskriti mb-3" style="height: 22px;">
+              <div class="progress-bar-sanskriti" style="width: {{ completion_pct }}%;"></div>
+            </div>
+            <div class="text-cream small">
+              <strong>{{ total_approved }}</strong> blessings collected • <strong>{{ pending_count }}</strong> remaining
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{{ url_for('approvals.approval_journey') }}" class="btn btn-gold">
+              <i data-lucide="activity" style="width: 16px;"></i> Track Journey Nodes
+            </a>
+            <a href="{{ url_for('departments.department_universe') }}" class="btn btn-gold-outline">
+              <i data-lucide="compass" style="width: 16px;"></i> Explore Departments
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if is_completed %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof FestiveAudio !== 'undefined') {
+      FestiveAudio.playApprovalFanfare();
+    }
+    if (typeof triggerFestiveConfetti === 'function') {
+      triggerFestiveConfetti();
+      setInterval(triggerFestiveConfetti, 2500);
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}
+

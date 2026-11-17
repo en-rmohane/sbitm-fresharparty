@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Faculty Blessings &amp; Memory Wall – {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Header -->
+  <div class="text-center mb-5">
+    <div class="d-inline-flex align-items-center gap-2 mb-2">
+      <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+      <span class="text-gold letter-spacing-3 text-uppercase small heading-cinzel">Gurukul Vani • Words of Wisdom</span>
+      <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+    </div>
+
+    <h1 class="gold-gradient-text heading-cinzel display-5 fw-bold mb-2">
+      FACULTY BLESSINGS WALL
+    </h1>
+
+    <p class="text-cream opacity-75 mx-auto" style="max-width: 650px;">
+      Sacred words of guidance, encouragement, and affectionate blessings bestowed by our respected professors to welcome the Sanskriti 2026 incoming batch.
+    </p>
+
+    <!-- Department Filters & Search -->
+    <div class="row justify-content-center g-3 mt-4">
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-gold text-gold">
+            <i data-lucide="search" style="width: 16px;"></i>
+          </span>
+          <input type="text" id="wallSearchInput" class="form-control form-sanskriti" placeholder="Search by faculty name or department...">
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <select id="wallDeptSelect" class="form-select form-sanskriti">
+          <option value="ALL">All Departments (Show All)</option>
+          {% for dept in departments %}
+            <option value="{{ dept.code }}">{{ dept.name }} ({{ dept.code }})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blessings Cards Grid -->
+  <div class="row g-4" id="blessingsCardsGrid">
+    {% for app in approved_records %}
+      {% set can_show_photo = app.consent and app.consent.public_display_consented %}
+      {% set dept_code = app.department.code %}
+
+      <div class="col-md-6 col-lg-4 blessing-item-card" data-dept="{{ dept_code }}" data-search="{{ app.faculty.full_display_name|lower }} {{ app.department.name|lower }} {{ dept_code|lower }}">
+        <div class="blessing-card shine-effect">
+          <div class="ornament-corner-tl"></div>
+          <div class="ornament-corner-tr"></div>
+
+          <!-- Top Row: Avatar & Dept -->
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center gap-3">
+              {% if can_show_photo and app.selfie %}
+                <img src="{{ url_for('approvals.view_selfie', approval_id=app.id) }}" alt="{{ app.faculty.name }}" class="blessing-faculty-img">
+              {% else %}
+                <div class="dept-icon-wrapper mb-0" style="width: 58px; height: 58px; font-size: 1.2rem;">
+                  {{ app.faculty.name[:1] }}
+                </div>
+              {% endif %}
+
+              <div>
+                <h5 class="heading-playfair text-gold-light fw-bold mb-0">
+                  {{ app.faculty.full_display_name }}
+                </h5>
+                <span class="small text-cream opacity-75 d-block">{{ app.faculty.designation }}</span>
+                <span class="badge bg-dark text-gold border border-gold" style="font-size: 0.7rem;">
+                  {{ dept_code }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blessing Message Text -->
+          <p class="blessing-quote-text">
+            {% if app.message and app.message.message_text %}
+              “{{ app.message.message_text }}”
+            {% else %}
+              “Warmest welcome and heartiest congratulations to the Freshers of Sanskriti 2026. May you illuminate our college with excellence and virtue!”
+            {% endif %}
+          </p>
+
+          <!-- Signature & Timestamp Footer -->
+          <div class="mt-auto pt-3 border-top border-gold border-opacity-25 d-flex justify-content-between align-items-center">
+            <div>
+              <span class="small text-muted d-block" style="font-size: 0.72rem;">Digital Signature:</span>
+              <img src="{{ url_for('approvals.view_signature', approval_id=app.id) }}" alt="Signature" class="signature-thumbnail">
+            </div>
+
+            <div class="text-end">
+              <span class="small text-muted d-block" style="font-size: 0.72rem;">Received On:</span>
+              <span class="small text-gold-light">{{ app.approval_time.strftime('%b %d, %Y') }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12 text-center py-5">
+        <div class="festive-card p-5 max-w-500 mx-auto">
+          <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 48px;" class="flicker-flame mb-3">
+          <h4 class="text-gold heading-cinzel mb-2">No Public Blessings Yet</h4>
+          <p class="text-cream opacity-75 small mb-3">
+            Event ambassadors are currently visiting faculty departments. Once blessings with public consent are recorded, they will shine here!
+          </p>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('departments.department_universe') }}" class="btn btn-gold btn-sm">
+              Collect First Blessing
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+{% block extra_js %}
+<script>
+  // Filter and search logic for the Blessings Wall
+  const searchInput = document.getElementById('wallSearchInput');
+  const deptSelect = document.getElementById('wallDeptSelect');
+  const cards = document.querySelectorAll('.blessing-item-card');
+
+  function applyFilters() {
+    const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const dept = deptSelect ? deptSelect.value : 'ALL';
+
+    cards.forEach((card) => {
+      const cardDept = card.getAttribute('data-dept');
+      const cardSearch = card.getAttribute('data-search') || '';
+
+      const matchesSearch = !q || cardSearch.includes(q);
+      const matchesDept = dept === 'ALL' || cardDept === dept;
+
+      card.style.display = matchesSearch && matchesDept ? 'block' : 'none';
+    });
+  }
+
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+  if (deptSelect) deptSelect.addEventListener('change', applyFilters);
+</script>
+{% endblock %}
+{% endblock %}
+

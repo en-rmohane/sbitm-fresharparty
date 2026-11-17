@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Select Faculty – {{ department.name }} | {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Breadcrumb & Back -->
+  <div class="mb-3">
+    <a href="{{ url_for('coordinator.dashboard') }}" class="btn btn-gold-outline btn-sm">
+      <i data-lucide="arrow-left" style="width: 15px;"></i> Coordinator Hub
+    </a>
+  </div>
+
+  <!-- Department Header Banner -->
+  <div class="festive-card p-4 mb-4">
+    <div class="ornament-corner-tl"></div>
+    <div class="ornament-corner-tr"></div>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <span class="badge bg-dark text-gold border border-gold mb-2 small">{{ department.code }} DEPARTMENT</span>
+        <h2 class="heading-cinzel text-gold fw-bold mb-1">{{ department.name }}</h2>
+        <p class="text-saffron small fst-italic mb-0">"{{ department.quote }}"</p>
+      </div>
+
+      <div class="text-end">
+        <span class="text-cream small d-block">Department Progress:</span>
+        <span class="heading-cinzel text-gold fs-4 fw-bold">
+          {{ approved_count }} / {{ total_count }} Blessings
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Bar -->
+  <div class="mb-4">
+    <div class="input-group">
+      <span class="input-group-text bg-transparent border-gold text-gold">
+        <i data-lucide="search" style="width: 18px;"></i>
+      </span>
+      <input type="text" id="facultySearchInput" class="form-control form-sanskriti" placeholder="Search faculty member by name or designation...">
+    </div>
+  </div>
+
+  <!-- Faculty Members List -->
+  <div class="row g-3" id="facultyCardsList">
+    {% for fac in faculties %}
+      {% set approval = fac.get_approval(event.id) %}
+      <div class="col-md-6 faculty-item-card" data-name="{{ fac.full_display_name|lower }} {{ fac.designation|lower }}">
+        <div class="festive-card p-3 h-100 d-flex flex-column justify-content-between">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="dept-icon-wrapper mb-0" style="width: 50px; height: 50px; font-size: 1.1rem; flex-shrink: 0;">
+              {{ fac.name[:1] }}
+            </div>
+            <div>
+              <h5 class="heading-playfair text-gold-light fw-bold mb-0">
+                {{ fac.full_display_name }}
+              </h5>
+              <div class="small text-cream opacity-75">{{ fac.designation }}</div>
+              {% if fac.cabin_number %}
+                <div class="small text-muted">Room / Cabin: {{ fac.cabin_number }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-between align-items-center pt-2 border-top border-gold border-opacity-25 mt-auto">
+            {% if approval %}
+              <div>
+                <span class="badge-approved small">
+                  <i data-lucide="check-check" style="width: 14px;" class="d-inline-block align-middle me-1"></i>
+                  Approved • {{ approval.approval_time.strftime('%I:%M %p') }}
+                </span>
+              </div>
+              <a href="{{ url_for('approvals.approval_details', approval_id=approval.id) }}" class="btn btn-gold-outline btn-sm">
+                View Receipt
+              </a>
+            {% else %}
+              <div>
+                <span class="badge-pending small">
+                  <i data-lucide="clock" style="width: 14px;" class="d-inline-block align-middle me-1"></i>
+                  Awaiting Blessing
+                </span>
+              </div>
+              <a href="{{ url_for('coordinator.approval_wizard', faculty_id=fac.id) }}" class="btn btn-gold btn-sm">
+                <i data-lucide="sparkles" style="width: 15px;"></i> Start Blessing Flow
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+{% block extra_js %}
+<script>
+  // Simple instant search for faculty list
+  const searchInput = document.getElementById('facultySearchInput');
+  const cards = document.querySelectorAll('.faculty-item-card');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      cards.forEach((card) => {
+        const text = card.getAttribute('data-name') || '';
+        card.style.display = text.includes(q) ? 'block' : 'none';
+      });
+    });
+  }
+</script>
+{% endblock %}
+{% endblock %}
+

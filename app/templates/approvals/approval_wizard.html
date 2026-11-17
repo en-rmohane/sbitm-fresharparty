@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Collect Faculty Blessing – {{ faculty.full_display_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+
+      <!-- Top Coordinator Context Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{{ url_for('coordinator.faculty_selection', department_id=faculty.department_id) }}" class="btn btn-gold-outline btn-sm">
+          <i data-lucide="arrow-left" style="width: 14px;"></i> Back to Faculty List
+        </a>
+        <span class="badge bg-dark text-gold border border-gold small">
+          Coordinator: {{ current_user.full_name }}
+        </span>
+      </div>
+
+      <!-- Step Indicator Bar -->
+      <div class="step-indicator px-2">
+        <div class="step-dot active" id="stepDot1" title="Invitation">1</div>
+        <div class="step-dot" id="stepDot2" title="E-Signature">2</div>
+        <div class="step-dot" id="stepDot3" title="Selfie Capture">3</div>
+        <div class="step-dot" id="stepDot4" title="Blessing">4</div>
+        <div class="step-dot" id="stepDot5" title="Review">5</div>
+      </div>
+
+      <!-- ===================================================================
+           STEP 1: Welcome & Digital Invitation Review
+           =================================================================== -->
+      <div class="festive-card p-4 mb-4" id="stepSection1">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+
+        <div class="text-center mb-4">
+          <div class="d-inline-flex align-items-center gap-2 mb-2">
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 32px;" class="flicker-flame">
+            <span class="text-saffron fw-bold letter-spacing-2 small devanagari-font">॥ नमो नमः ॥</span>
+            <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 32px;" class="flicker-flame">
+          </div>
+
+          <h3 class="heading-cinzel gold-gradient-text fw-bold mb-1">
+            Respected Faculty Member
+          </h3>
+          <h5 class="heading-playfair text-gold-light fw-bold mb-1">
+            {{ faculty.full_display_name }}
+          </h5>
+          <p class="text-muted small mb-3">
+            {{ faculty.designation }} • Department of {{ faculty.department.name }}
+          </p>
+
+          <p class="text-cream opacity-90 fst-italic" style="font-family: 'Playfair Display', serif; font-size: 1.05rem;">
+            "Your esteemed presence and heartfelt blessings make every new beginning sacred and memorable for our incoming students."
+          </p>
+        </div>
+
+        <!-- Embedded Mini Royal Invitation Card -->
+        <div class="invitation-royal-card p-3 p-md-4 mb-4 text-center">
+          <div class="card-inner-border p-3">
+            <span class="text-saffron small fw-bold text-uppercase letter-spacing-2 d-block mb-1">Official College Invitation</span>
+            <h4 class="gold-gradient-text heading-cinzel fw-bold mb-1">{{ event.title }}</h4>
+            <p class="text-dark small fst-italic mb-2">"{{ event.tagline }}"</p>
+            <p class="text-dark small mb-3">
+              {{ event.invitation_text }}
+            </p>
+            <div class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-3 py-1 small">
+              {{ event.event_date }} • {{ event.event_time }} • {{ event.venue }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Consent Checkbox -->
+        <div class="form-check p-3 rounded mb-4" style="background: rgba(198, 161, 91, 0.1); border: 1px solid var(--border-gold);">
+          <input class="form-check-input ms-0 me-2" type="checkbox" id="invitationConsentCheck" checked>
+          <label class="form-check-label text-cream small" for="invitationConsentCheck">
+            I acknowledge this invitation to <strong>{{ event.title }}</strong> and consent to provide my digital signature and blessings.
+          </label>
+        </div>
+
+        <div class="d-grid">
+          <button type="button" class="btn btn-gold btn-lg" data-wizard-next>
+            Proceed to Digital E-Signature <i data-lucide="arrow-right" style="width: 18px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           STEP 2: Digital E-Signature Pad
+           =================================================================== -->
+      <div class="festive-card p-4 mb-4" id="stepSection2" style="display: none;">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+
+        <div class="text-center mb-3">
+          <span class="badge-festive small text-uppercase mb-2">Step 2 of 5: Digital Acknowledgment</span>
+          <h4 class="heading-cinzel text-gold fw-bold mb-1">
+            Faculty E-Signature Pad
+          </h4>
+          <p class="text-cream opacity-75 small">
+            Please provide your digital signature using your finger, stylus, or mouse to acknowledge the invitation.
+          </p>
+        </div>
+
+        <!-- Interactive Canvas Pad -->
+        <div class="signature-canvas-container mb-3">
+          <canvas id="sigCanvas" class="signature-canvas"></canvas>
+          <div class="position-absolute bottom-0 end-0 p-2 text-muted small pe-none" style="font-size: 0.72rem;">
+            Touch or draw inside this box
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <button type="button" class="btn btn-outline-danger btn-sm" id="clearSigBtn">
+            <i data-lucide="trash-2" style="width: 14px;"></i> Clear Signature
+          </button>
+          <span class="text-muted small">Finger or stylus supported</span>
+        </div>
+
+        <div class="d-flex justify-content-between gap-2">
+          <button type="button" class="btn btn-gold-outline" data-wizard-prev>
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Back
+          </button>
+          <button type="button" class="btn btn-gold" data-wizard-next>
+            Confirm Signature &amp; Next <i data-lucide="arrow-right" style="width: 16px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           STEP 3: Live Faculty Selfie Capture
+           =================================================================== -->
+      <div class="festive-card p-4 mb-4" id="stepSection3" style="display: none;">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+
+        <div class="text-center mb-3">
+          <span class="badge-festive small text-uppercase mb-2">Step 3 of 5: Faculty Photo</span>
+          <h4 class="heading-cinzel text-gold fw-bold mb-1">
+            Live Front Camera Selfie
+          </h4>
+          <p class="text-cream opacity-75 small mb-0">
+            Smile for the college freshers memory archive! Please look towards the front camera.
+          </p>
+        </div>
+
+        <!-- Live Camera Stream Box -->
+        <div id="cameraLiveContainer" class="camera-preview-container mb-3 shadow">
+          <video id="selfieVideo" autoplay playsinline muted></video>
+          <canvas id="selfieCanvas" style="display: none;"></canvas>
+          <img id="selfiePreviewImg" alt="Captured Selfie" style="display: none;">
+        </div>
+
+        <!-- Controls for Live Capture -->
+        <div class="text-center mb-3">
+          <button type="button" id="btnCaptureSelfie" class="btn btn-gold btn-lg px-4 pulse-gold">
+            <i data-lucide="camera" style="width: 20px;"></i> Capture Selfie
+          </button>
+          <button type="button" id="btnRetakeSelfie" class="btn btn-gold-outline" style="display: none;">
+            <i data-lucide="refresh-cw" style="width: 16px;"></i> Retake Photo
+          </button>
+        </div>
+
+        <!-- Fallback File Upload (only shown if camera permissions fail or denied) -->
+        <div id="cameraFallbackContainer" style="display: none;" class="p-3 festive-card mb-3">
+          <div class="alert alert-warning small p-2 mb-2" id="cameraErrorHint">
+            Camera permission was not granted. You can upload a photo from your gallery below.
+          </div>
+          <label class="form-label text-gold-light small fw-bold">Upload Faculty Photo Fallback:</label>
+          <input type="file" id="manualSelfieInput" accept="image/*" class="form-control form-sanskriti">
+        </div>
+
+        <!-- Privacy & Visibility Notice -->
+        <div class="p-2 rounded mb-4 text-center" style="background: rgba(30, 8, 14, 0.6); border: 1px solid var(--border-gold);">
+          <small class="text-muted" style="font-size: 0.76rem;">
+            <i data-lucide="shield-check" style="width: 14px;" class="d-inline-block align-middle me-1 text-gold"></i>
+            Photo will be safely archived with this approval. You choose whether to display it publicly on the next step.
+          </small>
+        </div>
+
+        <div class="d-flex justify-content-between gap-2">
+          <button type="button" class="btn btn-gold-outline" data-wizard-prev>
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Back
+          </button>
+          <button type="button" class="btn btn-gold" data-wizard-next>
+            Confirm Photo &amp; Next <i data-lucide="arrow-right" style="width: 16px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           STEP 4: Faculty Blessings & Message
+           =================================================================== -->
+      <div class="festive-card p-4 mb-4" id="stepSection4" style="display: none;">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+
+        <div class="text-center mb-3">
+          <span class="badge-festive small text-uppercase mb-2">Step 4 of 5: Faculty Message</span>
+          <h4 class="heading-cinzel text-gold fw-bold mb-1">
+            Auspicious Words of Blessing
+          </h4>
+          <p class="text-cream opacity-75 small">
+            Inspire the freshmen with your guidance, blessings, or words of wisdom (Optional).
+          </p>
+        </div>
+
+        <!-- Blessing Textarea -->
+        <div class="mb-3">
+          <textarea id="facultyBlessingInput" class="form-sanskriti w-100" rows="4" maxlength="400" placeholder="Dear Students, welcome to your new journey. Learn with curiosity, work with dedication and make your college proud..."></textarea>
+          <div class="d-flex justify-content-between text-muted small mt-1">
+            <span>Character limit: 400</span>
+            <span id="charCounter">0 / 400</span>
+          </div>
+        </div>
+
+        <!-- Public Display Consent Toggle -->
+        <div class="form-check p-3 rounded mb-4" style="background: rgba(198, 161, 91, 0.12); border: 1.5px solid var(--border-gold);">
+          <input class="form-check-input ms-0 me-2" type="checkbox" id="publicConsentCheck" checked>
+          <label class="form-check-label text-cream small fw-semibold" for="publicConsentCheck">
+            Display my blessing message and photo publicly on the Sanskriti 2026 Faculty Blessings Wall.
+          </label>
+          <div class="text-muted small ps-4 pt-1" style="font-size: 0.74rem;">
+            If unchecked, your photo and message will remain strictly private for internal administrative review.
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between gap-2">
+          <button type="button" class="btn btn-gold-outline" data-wizard-prev>
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Back
+          </button>
+          <button type="button" class="btn btn-gold" data-wizard-next>
+            Review &amp; Confirm <i data-lucide="arrow-right" style="width: 16px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           STEP 5: Final Review & Confirmation Screen
+           =================================================================== -->
+      <div class="festive-card p-4 mb-4" id="stepSection5" style="display: none;">
+        <div class="ornament-corner-tl"></div>
+        <div class="ornament-corner-tr"></div>
+
+        <div class="text-center mb-3">
+          <span class="badge-festive small text-uppercase mb-2">Final Step: Verification</span>
+          <h4 class="heading-cinzel text-gold fw-bold mb-1">
+            Review Approval Details
+          </h4>
+          <p class="text-cream opacity-75 small">
+            Please review the signature, photo, and blessing before submitting to college archives.
+          </p>
+        </div>
+
+        <!-- Faculty Details Card -->
+        <div class="p-3 rounded mb-3" style="background: rgba(30, 8, 14, 0.7); border: 1px solid var(--border-gold);">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h5 class="text-gold-light fw-bold mb-0">{{ faculty.full_display_name }}</h5>
+              <div class="small text-cream">{{ faculty.designation }}</div>
+              <div class="small text-saffron">Department of {{ faculty.department.name }}</div>
+            </div>
+            <div class="col-4 text-end">
+              <span id="reviewConsentBadge" class="badge-festive small">Public Consented</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview Grid: Signature & Selfie -->
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <div class="p-2 rounded text-center" style="background: rgba(255, 255, 255, 0.95); border: 1px solid var(--border-gold);">
+              <span class="text-dark small d-block fw-bold mb-1">Digital Signature</span>
+              <img id="reviewSignatureImg" alt="Signature Preview" style="max-height: 85px; max-width: 100%; object-fit: contain;">
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-2 rounded text-center" style="background: rgba(0,0,0,0.6); border: 1px solid var(--border-gold);">
+              <span class="text-gold small d-block fw-bold mb-1">Faculty Selfie</span>
+              <img id="reviewSelfieImg" alt="Selfie Preview" style="max-height: 85px; max-width: 100%; object-fit: contain; border-radius: 6px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Blessing Quote Preview -->
+        <div class="p-3 rounded mb-4" style="background: rgba(198, 161, 91, 0.08); border-left: 3px solid var(--antique-gold);">
+          <span class="text-gold-light small fw-bold text-uppercase d-block mb-1">Blessing Message Preview:</span>
+          <p id="reviewBlessingText" class="text-cream fst-italic mb-0 small" style="font-family: 'Playfair Display', serif;">
+            “With warmest blessings and best wishes for Sanskriti 2026!”
+          </p>
+        </div>
+
+        <!-- Submission Notice -->
+        <div class="text-center text-muted small mb-4" style="font-size: 0.76rem;">
+          Verified and submitted in the presence of Dignitary Coordinator: <strong>{{ current_user.full_name }}</strong>.
+        </div>
+
+        <div class="d-flex justify-content-between gap-2">
+          <button type="button" class="btn btn-gold-outline" data-wizard-prev>
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Edit Details
+          </button>
+          <button type="button" class="btn btn-gold btn-lg pulse-gold" id="btnSubmitApproval">
+            <i data-lucide="check-circle" style="width: 20px;"></i> CONFIRM &amp; SUBMIT APPROVAL
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/signature.js') }}"></script>
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script src="{{ url_for('static', filename='js/approval.js') }}"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Character counter for blessing
+    const blessingInput = document.getElementById('facultyBlessingInput');
+    const charCounter = document.getElementById('charCounter');
+    if (blessingInput && charCounter) {
+      blessingInput.addEventListener('input', () => {
+        charCounter.textContent = `${blessingInput.value.length} / 400`;
+      });
+    }
+
+    // Initialize Approval Wizard
+    const wizard = new FacultyApprovalWizard({
+      facultyId: {{ faculty.id }},
+      eventId: {{ event.id }},
+      departmentId: {{ faculty.department_id }},
+      csrfToken: "{{ csrf_token() }}",
+      submitUrl: "{{ url_for('approvals.api_submit_approval') }}",
+      successRedirectUrl: "{{ url_for('departments.department_universe') }}"
+    });
+  });
+</script>
+{% endblock %}
+

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Live Analytics &amp; Approval Dashboard – {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <div class="d-inline-flex align-items-center gap-2 mb-1">
+        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 24px;" class="flicker-flame">
+        <span class="text-gold letter-spacing-2 small text-uppercase heading-cinzel">Real-Time Operational Intelligence</span>
+      </div>
+      <h2 class="heading-cinzel gold-gradient-text fw-bold mb-0">
+        LIVE APPROVAL DASHBOARD
+      </h2>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge-festive small">
+        <i data-lucide="activity" style="width: 14px;" class="d-inline-block align-middle me-1"></i> Auto-Sync: 15s
+      </span>
+      <a href="{{ url_for('reports.index') }}" class="btn btn-gold-outline btn-sm">
+        <i data-lucide="file-text" style="width: 14px;"></i> View Reports
+      </a>
+    </div>
+  </div>
+
+  <!-- Key Metrics Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-2">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Departments</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1" id="statTotalDepts">{{ total_departments }}</h3>
+        <span class="text-muted small">Academic Units</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-2">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Total Faculty</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1" id="statTotalFaculty">{{ total_faculty }}</h3>
+        <span class="text-muted small">Campus Professors</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-2">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Approved</span>
+        <h3 class="heading-cinzel text-success fw-bold mb-0 my-1" id="statApprovedCount">{{ approved_count }}</h3>
+        <span class="text-muted small">Blessings Logged</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-2">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Pending</span>
+        <h3 class="heading-cinzel text-warning fw-bold mb-0 my-1" id="statPendingCount">{{ pending_count }}</h3>
+        <span class="text-muted small">Awaiting Visit</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-2">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Coordinators</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1">{{ total_coordinators }}</h3>
+        <span class="text-muted small">Active In Field</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-2">
+      <div class="festive-card p-3 text-center">
+        <span class="text-gold-light small text-uppercase">Completion</span>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0 my-1" id="statProgressPercent">{{ completion_pct }}%</h3>
+        <span class="text-muted small">Campus Milestone</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8">
+      <div class="festive-card p-4 h-100">
+        <h5 class="heading-cinzel text-gold fw-bold mb-3 d-flex align-items-center gap-2">
+          <i data-lucide="bar-chart-2" style="width: 18px;"></i> Department-Wise Approval Status
+        </h5>
+        <div style="position: relative; height: 320px;">
+          <canvas id="deptApprovalChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="festive-card p-4 h-100 text-center">
+        <h5 class="heading-cinzel text-gold fw-bold mb-3 d-flex align-items-center justify-content-center gap-2">
+          <i data-lucide="pie-chart" style="width: 18px;"></i> Overall Ratio
+        </h5>
+        <div style="position: relative; height: 260px;">
+          <canvas id="approvalRatioChart"></canvas>
+        </div>
+        <div class="mt-2 text-muted small">
+          Threshold to Grand Finale: 100% completion
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Approvals Timeline Table -->
+  <div class="festive-card p-4">
+    <h5 class="heading-cinzel text-gold fw-bold mb-3 d-flex align-items-center gap-2">
+      <i data-lucide="clock" style="width: 18px;"></i> Recent Blessings Recorded Live
+    </h5>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
+        <thead>
+          <tr class="border-gold border-bottom text-gold-light text-uppercase small">
+            <th>Timestamp</th>
+            <th>Faculty Dignitary</th>
+            <th>Department</th>
+            <th>Coordinator</th>
+            <th>Signature &amp; Photo</th>
+            <th>Public Consent</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in recent_approvals %}
+            <tr class="border-gold border-bottom border-opacity-25">
+              <td class="small text-muted">{{ app.approval_time.strftime('%b %d, %I:%M %p') }}</td>
+              <td class="fw-bold text-gold-light">{{ app.faculty.full_display_name }}</td>
+              <td><span class="badge bg-dark text-gold border border-gold">{{ app.department.code }}</span></td>
+              <td class="small text-cream">{{ app.coordinator.full_name }}</td>
+              <td>
+                <span class="badge-approved small">
+                  <i data-lucide="check" style="width: 12px;"></i> Captured
+                </span>
+              </td>
+              <td>
+                {% if app.consent and app.consent.public_display_consented %}
+                  <span class="badge-festive small">Public</span>
+                {% else %}
+                  <span class="badge-pending small">Private</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('approvals.approval_details', approval_id=app.id) }}" class="btn btn-gold-outline btn-sm py-0 px-2" style="font-size: 0.78rem;">
+                  Details
+                </a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">
+                No approvals have been recorded yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    new SanskritiDashboard("{{ url_for('approvals.api_stats') }}");
+  });
+</script>
+{% endblock %}
+

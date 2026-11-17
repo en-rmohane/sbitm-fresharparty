@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Department Approval Journey – {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+  <!-- Header -->
+  <div class="d-inline-flex align-items-center gap-2 mb-2">
+    <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+    <span class="text-gold letter-spacing-3 text-uppercase small heading-cinzel">Sacred Campus Pilgrimage</span>
+    <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+  </div>
+
+  <h1 class="gold-gradient-text heading-cinzel display-5 fw-bold mb-2">
+    DEPARTMENT APPROVAL JOURNEY
+  </h1>
+
+  <p class="text-cream opacity-75 mx-auto mb-4" style="max-width: 650px;">
+    Follow the live path of event ambassadors traversing each academic block to gather royal blessings and digital acknowledgments.
+  </p>
+
+  <!-- Live Campus Progress Gauge -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+      <div class="festive-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-gold-light fw-bold text-uppercase small">Cumulative Blessings Completion:</span>
+          <span class="heading-cinzel text-gold fs-4 fw-bold" id="statProgressPercent">{{ completion_pct }}%</span>
+        </div>
+        <div class="progress-sanskriti mb-3" style="height: 20px;">
+          <div id="statProgressBar" class="progress-bar-sanskriti" style="width: {{ completion_pct }}%;"></div>
+        </div>
+
+        <div class="row text-center g-2 pt-2 border-top border-gold border-opacity-25">
+          <div class="col-3">
+            <span class="text-muted small d-block">Departments</span>
+            <strong class="text-gold" id="statTotalDepts">{{ total_departments }}</strong>
+          </div>
+          <div class="col-3">
+            <span class="text-muted small d-block">Total Faculty</span>
+            <strong class="text-gold" id="statTotalFaculty">{{ total_faculty }}</strong>
+          </div>
+          <div class="col-3">
+            <span class="text-muted small d-block">Approved</span>
+            <strong class="text-success" id="statApprovedCount">{{ approved_count }}</strong>
+          </div>
+          <div class="col-3">
+            <span class="text-muted small d-block">Pending</span>
+            <strong class="text-warning" id="statPendingCount">{{ pending_count }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interconnected Journey Nodes -->
+  <div class="journey-node-container" id="journeyNodesGrid">
+    {% for dept in departments %}
+      {% set dept_approved = dept.approved_count(event.id) %}
+      {% set dept_total = dept.total_faculty_count() %}
+      {% set status = dept.approval_status(event.id) %}
+
+      <div class="journey-node {% if status == 'approved' %}status-approved pulse-gold{% else %}status-pending{% endif %}"
+           data-bs-toggle="tooltip" 
+           data-bs-title="{{ dept.name }}: {{ dept_approved }}/{{ dept_total }} Approved"
+           onclick="window.location.href='{{ url_for('departments.department_universe') }}#deptModal{{ dept.id }}'">
+        <i data-lucide="{{ dept.icon_name or 'cpu' }}" class="text-gold mb-1" style="width: 28px; height: 28px;"></i>
+        <strong class="text-gold-light" style="font-size: 0.88rem;">{{ dept.code }}</strong>
+        <span class="small text-cream opacity-80" style="font-size: 0.72rem;">{{ dept_approved }}/{{ dept_total }}</span>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Legend & Real-Time Sync Indicator -->
+  <div class="d-flex flex-wrap justify-content-center align-items-center gap-4 mt-4 pt-3 text-cream small">
+    <div class="d-flex align-items-center gap-2">
+      <span style="width: 14px; height: 14px; border-radius: 50%; background: #C6A15B; display: inline-block; box-shadow: 0 0 8px #C6A15B;"></span>
+      <span>100% Blessings Received</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="width: 14px; height: 14px; border-radius: 50%; background: #FFA726; display: inline-block;"></span>
+      <span>In Progress / Partially Visited</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="width: 14px; height: 14px; border-radius: 50%; background: rgba(198, 161, 91, 0.25); display: inline-block;"></span>
+      <span>Awaiting Campus Visit</span>
+    </div>
+    <div class="d-flex align-items-center gap-2 text-muted">
+      <i data-lucide="refresh-cw" style="width: 13px;"></i>
+      <span>Live Sync Active (15s)</span>
+    </div>
+  </div>
+
+  <!-- Bottom Action -->
+  <div class="mt-5">
+    <a href="{{ url_for('approvals.live_dashboard') }}" class="btn btn-gold">
+      <i data-lucide="bar-chart-2" style="width: 16px;"></i> Open Live Analytics Dashboard
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Periodic poll for Journey live update
+  async function refreshJourneyStats() {
+    try {
+      const res = await fetch("{{ url_for('approvals.api_stats') }}");
+      if (res.ok) {
+        const d = await res.json();
+        const pElem = document.getElementById('statProgressPercent');
+        const bElem = document.getElementById('statProgressBar');
+        if (pElem) pElem.textContent = d.completion_percentage + '%';
+        if (bElem) bElem.style.width = d.completion_percentage + '%';
+        if (document.getElementById('statApprovedCount')) document.getElementById('statApprovedCount').textContent = d.approved_count;
+        if (document.getElementById('statPendingCount')) document.getElementById('statPendingCount').textContent = d.pending_count;
+      }
+    } catch(e) {}
+  }
+  setInterval(refreshJourneyStats, 15000);
+</script>
+{% endblock %}
+

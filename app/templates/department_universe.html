@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Department Universe – {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Header Section -->
+  <div class="text-center mb-5">
+    <div class="d-inline-flex align-items-center gap-2 mb-2">
+      <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+      <span class="text-gold letter-spacing-3 text-uppercase small heading-cinzel">Academic Realms of Excellence</span>
+      <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+    </div>
+    
+    <h1 class="gold-gradient-text heading-cinzel display-5 fw-bold mb-3">
+      DEPARTMENT UNIVERSE
+    </h1>
+    
+    <p class="text-cream opacity-75 mx-auto" style="max-width: 650px;">
+      Explore every academic department participating in Sanskriti 2026. Discover their unique philosophies, esteemed faculty members, and digital blessings progress.
+    </p>
+
+    <!-- Overall Quick Stats Bar -->
+    <div class="d-flex flex-wrap justify-content-center gap-4 mt-4">
+      <div class="festive-card px-4 py-2 text-center">
+        <span class="text-gold-light small text-uppercase">Departments</span>
+        <h4 class="text-gold heading-cinzel mb-0">{{ departments|length }}</h4>
+      </div>
+      <div class="festive-card px-4 py-2 text-center">
+        <span class="text-gold-light small text-uppercase">Total Faculty</span>
+        <h4 class="text-gold heading-cinzel mb-0">{{ total_faculty }}</h4>
+      </div>
+      <div class="festive-card px-4 py-2 text-center">
+        <span class="text-gold-light small text-uppercase">Blessings Collected</span>
+        <h4 class="text-gold heading-cinzel mb-0">{{ total_approved }}</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Departments Grid -->
+  <div class="row g-4">
+    {% for dept in departments %}
+      {% set dept_approved = dept.approved_count(event.id) %}
+      {% set dept_total = dept.total_faculty_count() %}
+      {% set status = dept.approval_status(event.id) %}
+
+      <div class="col-md-6 col-lg-4">
+        <div class="department-card h-100">
+          <div class="ornament-corner-tl"></div>
+          <div class="ornament-corner-tr"></div>
+          
+          <!-- Top Row: Icon & Status -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="dept-icon-wrapper" style="border-color: {{ dept.theme_color }}; color: {{ dept.theme_color }};">
+              <i data-lucide="{{ dept.icon_name or 'cpu' }}" style="width: 26px; height: 26px;"></i>
+            </div>
+            <div>
+              {% if status == 'approved' %}
+                <span class="badge-approved small">
+                  <i data-lucide="check-circle" style="width: 14px;" class="d-inline-block align-middle me-1"></i> Completed
+                </span>
+              {% elif status == 'in_progress' %}
+                <span class="badge-festive small">
+                  <i data-lucide="clock" style="width: 14px;" class="d-inline-block align-middle me-1"></i> In Progress
+                </span>
+              {% else %}
+                <span class="badge-pending small">
+                  <i data-lucide="hourglass" style="width: 14px;" class="d-inline-block align-middle me-1"></i> Pending
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Department Name & Code -->
+          <h4 class="heading-cinzel text-gold fw-bold mb-1">
+            {{ dept.name }}
+          </h4>
+          <span class="badge bg-dark text-gold border border-gold mb-2 small align-self-start">
+            {{ dept.code }}
+          </span>
+
+          <!-- Speciality / Motto -->
+          <p class="text-saffron small fw-semibold mb-2">
+            {{ dept.speciality }}
+          </p>
+
+          <!-- Quote -->
+          <blockquote class="dept-quote">
+            "{{ dept.quote }}"
+          </blockquote>
+
+          <!-- HOD Name if available -->
+          {% if dept.hod_name %}
+            <div class="small text-cream opacity-75 mb-3">
+              <i data-lucide="award" style="width: 14px;" class="d-inline-block align-middle text-gold me-1"></i>
+              Head of Dept: <strong class="text-gold-light">{{ dept.hod_name }}</strong>
+            </div>
+          {% endif %}
+
+          <!-- Progress Bar inside Card -->
+          <div class="mt-auto pt-3 border-top border-gold border-opacity-25">
+            <div class="d-flex justify-content-between text-cream small mb-1">
+              <span>Faculty Blessings:</span>
+              <span class="fw-bold text-gold">{{ dept_approved }} / {{ dept_total }}</span>
+            </div>
+            <div class="progress-sanskriti mb-3">
+              {% set pct = (dept_approved / dept_total * 100)|round if dept_total > 0 else 0 %}
+              <div class="progress-bar-sanskriti" style="width: {{ pct }}%;"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-gold-outline btn-sm" data-bs-toggle="modal" data-bs-target="#deptModal{{ dept.id }}">
+                <i data-lucide="users" style="width: 15px;"></i> View Faculty Roster ({{ dept_total }})
+              </button>
+
+              {% if current_user.is_authenticated %}
+                <a href="{{ url_for('coordinator.faculty_selection', department_id=dept.id) }}" class="btn btn-gold btn-sm">
+                  <i data-lucide="pen-tool" style="width: 15px;"></i> Collect Blessings Here
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Department Faculty Roster Modals (Placed cleanly outside grid rows) -->
+  {% for dept in departments %}
+    {% set dept_total = dept.total_faculty_count() %}
+    <div class="modal fade" id="deptModal{{ dept.id }}" tabindex="-1" aria-labelledby="deptModalLabel{{ dept.id }}" aria-hidden="true" data-bs-backdrop="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content festive-card" style="background: rgba(38, 10, 16, 0.98); border: 2px solid var(--antique-gold);">
+          
+          <div class="modal-header border-bottom border-gold pb-3 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="modal-title heading-cinzel text-gold fw-bold mb-1" id="deptModalLabel{{ dept.id }}">
+                {{ dept.name }} ({{ dept.code }})
+              </h5>
+              <p class="text-cream opacity-75 small mb-0">{{ dept.speciality }}</p>
+            </div>
+            <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('deptModal{{ dept.id }}')).hide();">
+              &times;
+            </button>
+          </div>
+          
+          <div class="modal-body py-3 px-4">
+            <div class="list-group list-group-flush bg-transparent">
+              {% for fac in dept.faculties %}
+                {% set is_approved = fac.has_approved(event.id) %}
+                <div class="list-group-item bg-transparent text-cream border-bottom border-gold border-opacity-25 px-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="dept-icon-wrapper mb-0" style="width: 44px; height: 44px; font-size: 0.9rem;">
+                      {{ fac.name[:1] }}
+                    </div>
+                    <div>
+                      <h6 class="text-gold-light mb-0 fw-bold">{{ fac.full_display_name }}</h6>
+                      <span class="small text-muted">{{ fac.designation }}</span>
+                      {% if fac.cabin_number %}
+                        <span class="text-muted small">• Cabin: {{ fac.cabin_number }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div>
+                    {% if is_approved %}
+                      <span class="badge-approved small">
+                        <i data-lucide="check" style="width: 14px;" class="d-inline-block align-middle me-1"></i> Blessing Received
+                      </span>
+                    {% else %}
+                      <span class="badge-pending small">
+                        <i data-lucide="clock" style="width: 14px;" class="d-inline-block align-middle me-1"></i> Awaiting Visit
+                      </span>
+                    {% endif %}
+
+                    {% if current_user.is_authenticated and not is_approved %}
+                      <a href="{{ url_for('coordinator.approval_wizard', faculty_id=fac.id) }}" class="btn btn-gold btn-sm ms-2">
+                        <i data-lucide="signature" style="width: 14px;"></i> Collect Signature
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% else %}
+                <div class="text-center text-muted py-4">
+                  No faculty members listed in this department yet.
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="modal-footer border-top border-gold pt-3">
+            <button type="button" class="btn btn-gold-outline btn-sm" data-bs-dismiss="modal" onclick="bootstrap.Modal.getOrCreateInstance(document.getElementById('deptModal{{ dept.id }}')).hide();">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+{% endblock %}
+

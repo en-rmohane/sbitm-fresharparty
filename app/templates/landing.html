@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} – Grand Digital Invitation Experience{% endblock %}
+
+{% block content %}
+<div class="hero-landing">
+  <div class="container text-center">
+
+    <!-- Top Diya Badge -->
+    <div class="mb-4" data-aos="fade-down">
+      <span class="diya-badge">
+        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" alt="Diya" class="flicker-flame">
+        {{ event.college_short_name }} Presents Sanskriti 2026
+        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" alt="Diya" class="flicker-flame">
+      </span>
+    </div>
+
+    <!-- College Name & Welcome Subtitle -->
+    <h5 class="text-gold letter-spacing-3 text-uppercase mb-2 heading-cinzel">
+      {{ event.college_name }}
+    </h5>
+
+    <!-- Central Cinematic 3D Envelope Experience -->
+    <div class="envelope-stage my-4">
+      <div class="envelope-wrapper" id="invitationEnvelope" title="Click to Open Your Royal Invitation">
+        <!-- Flap -->
+        <div class="envelope-flap"></div>
+        
+        <!-- Antique Golden Wax Seal -->
+        <div class="envelope-wax-seal seal-shimmer" id="envelopeWaxSeal">
+          <img src="{{ url_for('static', filename='images/decorations/wax_seal.svg') }}" alt="Royal Wax Seal" class="w-100 h-100">
+        </div>
+
+        <!-- Emerged Invitation Letter Card -->
+        <div class="envelope-letter" id="envelopeLetter">
+          <div class="ornament-corner-tl"></div>
+          <div class="ornament-corner-tr"></div>
+          <div class="ornament-corner-bl"></div>
+          <div class="ornament-corner-br"></div>
+
+          <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
+            <span class="text-saffron text-uppercase small letter-spacing-2 fw-bold mb-1 devanagari-font">॥ शुभ आरम्भ ॥</span>
+            <h4 class="gold-gradient-text heading-cinzel fw-bold mb-1">FRESHERS PARTY 2026</h4>
+            <p class="text-dark small fst-italic mb-2" style="font-family: 'Playfair Display', serif;">
+              "New Beginnings, Beautiful Connections, Endless Memories"
+            </p>
+            <div class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-3 py-1 small">
+              {{ event.event_date }} • {{ event.event_time }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Pocket Base -->
+        <div class="envelope-pocket"></div>
+      </div>
+    </div>
+
+    <!-- Interactive Envelope Trigger Button -->
+    <div class="mb-5">
+      <button id="openInvitationBtn" class="btn btn-gold btn-lg px-4 py-3 pulse-gold">
+        <i data-lucide="mail-open" style="width: 22px;"></i>
+        OPEN YOUR INVITATION
+      </button>
+    </div>
+
+    <!-- REVEALED INVITATION DETAILS SECTION (Smoothly revealed upon opening) -->
+    <div id="revealedDetails" style="display: none; opacity: 0; transform: translateY(30px);" class="mt-4">
+      
+      <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+
+          <!-- Grand Invitation Royal Card -->
+          <div class="invitation-royal-card text-center mb-5 shine-effect">
+            <div class="card-inner-border">
+              <div class="ornament-corner-tl" style="width: 48px; height: 48px;"></div>
+              <div class="ornament-corner-tr" style="width: 48px; height: 48px;"></div>
+              <div class="ornament-corner-bl" style="width: 48px; height: 48px;"></div>
+              <div class="ornament-corner-br" style="width: 48px; height: 48px;"></div>
+
+              <div class="d-inline-flex align-items-center gap-2 mb-2">
+                <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 32px;" class="flicker-flame">
+                <span class="text-saffron fw-bold letter-spacing-2 small devanagari-font">॥ ॐ श्री गणेशाय नमः ॥</span>
+                <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 32px;" class="flicker-flame">
+              </div>
+
+              <p class="heading-cinzel text-uppercase text-gold fw-bold mb-1 letter-spacing-3">
+                YOU ARE CORDIALLY INVITED
+              </p>
+
+              <h1 class="gold-gradient-text heading-cinzel display-5 fw-bold my-2">
+                {{ event.title }}
+              </h1>
+
+              <h5 class="heading-playfair text-dark fst-italic mb-3">
+                "{{ event.tagline }}"
+              </h5>
+
+              <p class="text-dark mx-auto mb-4" style="max-width: 650px; font-size: 1.05rem; line-height: 1.7;">
+                {{ event.supporting_message }}
+              </p>
+
+              <!-- Invitation Key Facts Grid -->
+              <div class="row g-3 justify-content-center text-start my-3">
+                <div class="col-md-4">
+                  <div class="p-3 rounded-3" style="background: rgba(198, 161, 91, 0.12); border: 1px solid var(--border-gold);">
+                    <div class="d-flex align-items-center gap-2 text-gold mb-1">
+                      <i data-lucide="calendar" style="width: 18px;"></i>
+                      <strong class="small text-uppercase">Date &amp; Time</strong>
+                    </div>
+                    <div class="text-dark fw-bold">{{ event.event_date }}</div>
+                    <div class="text-muted small">{{ event.event_time }}</div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="p-3 rounded-3" style="background: rgba(198, 161, 91, 0.12); border: 1px solid var(--border-gold);">
+                    <div class="d-flex align-items-center gap-2 text-gold mb-1">
+                      <i data-lucide="map-pin" style="width: 18px;"></i>
+                      <strong class="small text-uppercase">Venue</strong>
+                    </div>
+                    <div class="text-dark fw-bold">{{ event.venue }}</div>
+                    <div class="text-muted small">{{ event.college_name }}</div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="p-3 rounded-3" style="background: rgba(198, 161, 91, 0.12); border: 1px solid var(--border-gold);">
+                    <div class="d-flex align-items-center gap-2 text-gold mb-1">
+                      <i data-lucide="users" style="width: 18px;"></i>
+                      <strong class="small text-uppercase">Organizers</strong>
+                    </div>
+                    <div class="text-dark fw-bold">{{ event.organizer_details }}</div>
+                    <div class="text-muted small">Student Core Council</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Bar Inside Card -->
+              <div class="d-flex flex-wrap justify-content-center gap-3 mt-4 pt-2">
+                <a href="{{ url_for('departments.invitation') }}" class="btn btn-maroon">
+                  <i data-lucide="eye" style="width: 16px;"></i> View Full Digital Invitation
+                </a>
+                <a href="{{ url_for('reports.download_event_invitation_pdf') }}" class="btn btn-gold-outline" target="_blank">
+                  <i data-lucide="download" style="width: 16px;"></i> Download Card PDF
+                </a>
+                <button onclick="shareInvitation('{{ event.title }}', '{{ event.tagline }}', window.location.href)" class="btn btn-gold">
+                  <i data-lucide="share-2" style="width: 16px;"></i> Share Invitation
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Countdown Timer Section -->
+          <div class="festive-card p-4 text-center mb-5">
+            <h5 class="heading-cinzel text-gold text-uppercase letter-spacing-2 mb-2">
+              <i data-lucide="clock" class="d-inline-block align-middle me-2" style="width: 18px;"></i>
+              COUNTDOWN TO CELEBRATION
+            </h5>
+            
+            <div class="countdown-container" id="eventCountdown" data-event-date="{{ event.event_date }} {{ event.event_time }}">
+              <div class="countdown-box">
+                <div class="countdown-number" id="cdDays">00</div>
+                <div class="countdown-label">Days</div>
+              </div>
+              <div class="countdown-box">
+                <div class="countdown-number" id="cdHours">00</div>
+                <div class="countdown-label">Hours</div>
+              </div>
+              <div class="countdown-box">
+                <div class="countdown-number" id="cdMinutes">00</div>
+                <div class="countdown-label">Minutes</div>
+              </div>
+              <div class="countdown-box">
+                <div class="countdown-number" id="cdSeconds">00</div>
+                <div class="countdown-label">Seconds</div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+              <a href="{{ url_for('departments.department_universe') }}" class="btn btn-gold">
+                <i data-lucide="compass" style="width: 18px;"></i> Explore Department Universe
+              </a>
+              <a href="{{ url_for('approvals.blessings_wall') }}" class="btn btn-gold-outline">
+                <i data-lucide="heart" style="width: 18px;"></i> Faculty Blessings Wall
+              </a>
+              <a href="{{ url_for('approvals.approval_journey') }}" class="btn btn-maroon">
+                <i data-lucide="activity" style="width: 18px;"></i> Live Journey Status
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+

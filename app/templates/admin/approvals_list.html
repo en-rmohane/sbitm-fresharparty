@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Approvals Vault – Sanskriti 2026 Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-gold-outline btn-sm">
+      <i data-lucide="arrow-left" style="width: 14px;"></i> Back to Command Center
+    </a>
+
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('reports.download_event_report_pdf') }}" class="btn btn-gold btn-sm" target="_blank">
+        <i data-lucide="download" style="width: 14px;"></i> Event PDF Report
+      </a>
+    </div>
+  </div>
+
+  <div class="festive-card p-4">
+    <div class="d-flex align-items-center gap-3 mb-4 border-bottom border-gold pb-3">
+      <div class="dept-icon-wrapper mb-0" style="width: 48px; height: 48px;">
+        <i data-lucide="check-check"></i>
+      </div>
+      <div>
+        <h3 class="heading-cinzel text-gold fw-bold mb-0">FACULTY APPROVALS VAULT</h3>
+        <span class="text-cream opacity-75 small">Total {{ approvals|length }} verified faculty approvals archived</span>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
+        <thead>
+          <tr class="border-gold border-bottom text-gold-light small text-uppercase">
+            <th>ID / UUID</th>
+            <th>Faculty Dignitary</th>
+            <th>Department</th>
+            <th>Timestamp</th>
+            <th>Coordinator</th>
+            <th>Signature</th>
+            <th>Photo</th>
+            <th>Public Display</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in approvals %}
+            <tr class="border-gold border-bottom border-opacity-25 small">
+              <td><code>#{{ app.id }}</code></td>
+              <td class="fw-bold text-gold-light">{{ app.faculty.full_display_name }}</td>
+              <td><span class="badge bg-dark text-gold border border-gold">{{ app.department.code }}</span></td>
+              <td class="text-muted">{{ app.approval_time.strftime('%d %b, %I:%M %p') }}</td>
+              <td class="text-cream">{{ app.coordinator.full_name }}</td>
+              <td>
+                {% if app.signature %}
+                  <span class="text-success">✓ Yes</span>
+                {% else %}
+                  <span class="text-danger">✗ No</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if app.selfie %}
+                  <span class="text-success">✓ {{ app.selfie.capture_method }}</span>
+                {% else %}
+                  <span class="text-danger">✗ No</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if app.consent and app.consent.public_display_consented %}
+                  <span class="badge-approved small">Consented</span>
+                {% else %}
+                  <span class="badge-pending small">Private</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('approvals.approval_details', approval_id=app.id) }}" class="btn btn-gold-outline btn-sm py-0 px-2" style="font-size: 0.78rem;">
+                  Inspect / Reset
+                </a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="9" class="text-center text-muted py-4">No faculty approvals recorded yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

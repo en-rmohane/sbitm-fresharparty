@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Reports &amp; Documentation Hub – {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <div class="text-center mb-5">
+    <div class="d-inline-flex align-items-center gap-2 mb-2">
+      <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+      <span class="text-gold letter-spacing-3 text-uppercase small heading-cinzel">Official Documentation &amp; Archives</span>
+      <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 28px;" class="flicker-flame">
+    </div>
+
+    <h1 class="gold-gradient-text heading-cinzel display-5 fw-bold mb-2">
+      REPORTS &amp; PDF ARCHIVES
+    </h1>
+
+    <p class="text-cream opacity-75 mx-auto" style="max-width: 650px;">
+      Generate publication-ready official PDF dossiers and summary reports with royal maroon &amp; antique gold stationery styling.
+    </p>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+
+    <!-- Report 1: Complete Event Approval Report -->
+    <div class="col-md-6 col-lg-4">
+      <div class="festive-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="dept-icon-wrapper mb-3" style="width: 50px; height: 50px;">
+            <i data-lucide="file-check-2"></i>
+          </div>
+          <h5 class="heading-cinzel text-gold fw-bold mb-2">Complete Event Approval Report</h5>
+          <p class="text-cream opacity-75 small mb-3">
+            Full comprehensive roster of all verified faculty approvals across all college departments with timestamps, coordinator badges, and verification hashes.
+          </p>
+        </div>
+
+        <a href="{{ url_for('reports.download_event_report_pdf') }}" class="btn btn-gold btn-sm w-100" target="_blank">
+          <i data-lucide="download" style="width: 15px;"></i> Generate Event PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Report 2: Faculty Blessings Collection -->
+    <div class="col-md-6 col-lg-4">
+      <div class="festive-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="dept-icon-wrapper mb-3" style="width: 50px; height: 50px;">
+            <i data-lucide="heart-handshake"></i>
+          </div>
+          <h5 class="heading-cinzel text-gold fw-bold mb-2">Faculty Blessings Anthology</h5>
+          <p class="text-cream opacity-75 small mb-3">
+            A beautiful commemorative publication containing all inspirational words of wisdom, quotes, and wishes bestowed by our respected faculty for the freshers.
+          </p>
+        </div>
+
+        <a href="{{ url_for('reports.download_blessings_pdf') }}" class="btn btn-gold btn-sm w-100" target="_blank">
+          <i data-lucide="download" style="width: 15px;"></i> Generate Anthology PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Report 3: Final Event Approval Summary -->
+    <div class="col-md-6 col-lg-4">
+      <div class="festive-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="dept-icon-wrapper mb-3" style="width: 50px; height: 50px;">
+            <i data-lucide="award"></i>
+          </div>
+          <h5 class="heading-cinzel text-gold fw-bold mb-2">Executive Summary Report</h5>
+          <p class="text-cream opacity-75 small mb-3">
+            High-level executive briefing with department completion tallies, statistics, coordinator metrics, and official validation seal.
+          </p>
+        </div>
+
+        <a href="{{ url_for('reports.download_final_summary_pdf') }}" class="btn btn-gold btn-sm w-100" target="_blank">
+          <i data-lucide="download" style="width: 15px;"></i> Download Summary PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Report 4: Royal Digital Invitation PDF -->
+    <div class="col-md-6 col-lg-4">
+      <div class="festive-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="dept-icon-wrapper mb-3" style="width: 50px; height: 50px;">
+            <i data-lucide="mail"></i>
+          </div>
+          <h5 class="heading-cinzel text-gold fw-bold mb-2">Formal Printable Invitation Card</h5>
+          <p class="text-cream opacity-75 small mb-3">
+            Royal Indian festive invitation layout designed for printing or sharing as high-resolution PDF document.
+          </p>
+        </div>
+
+        <a href="{{ url_for('reports.download_event_invitation_pdf') }}" class="btn btn-gold-outline btn-sm w-100" target="_blank">
+          <i data-lucide="printer" style="width: 15px;"></i> Download Invitation Card PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Report 5: Faculty Directory CSV Export -->
+    <div class="col-md-6 col-lg-4">
+      <div class="festive-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="dept-icon-wrapper mb-3" style="width: 50px; height: 50px;">
+            <i data-lucide="table"></i>
+          </div>
+          <h5 class="heading-cinzel text-gold fw-bold mb-2">Faculty Directory Data (CSV)</h5>
+          <p class="text-cream opacity-75 small mb-3">
+            Tabular spreadsheet data of all campus professors, departments, designations, cabin allocations, and approval status.
+          </p>
+        </div>
+
+        <a href="{{ url_for('reports.export_faculty_csv') }}" class="btn btn-gold-outline btn-sm w-100">
+          <i data-lucide="file-spreadsheet" style="width: 15px;"></i> Export CSV Spreadsheet
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+

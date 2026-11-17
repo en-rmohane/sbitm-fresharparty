@@ -1,0 +1,126 @@
+/* ==========================================================================
+   SANSKRITI 2026 - Animations & Visual Transitions
+   ========================================================================== */
+
+/* Diya Flame Flicker */
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 6px rgba(255, 170, 0, 0.8));
+  }
+  25% {
+    transform: scale(1.04, 0.98) rotate(1.5deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255, 190, 0, 0.95));
+  }
+  50% {
+    transform: scale(0.97, 1.03) rotate(-2deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 7px rgba(255, 140, 0, 0.85));
+  }
+  75% {
+    transform: scale(1.02, 1) rotate(1deg);
+    opacity: 0.98;
+    filter: drop-shadow(0 0 11px rgba(255, 200, 0, 0.95));
+  }
+}
+
+.flicker-flame {
+  animation: flameFlicker 2.2s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* Subtle Golden Glow Pulse */
+@keyframes goldPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(198, 161, 91, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(198, 161, 91, 0.6);
+  }
+}
+
+.pulse-gold {
+  animation: goldPulse 3s infinite ease-in-out;
+}
+
+/* Float Animation */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.float-animation {
+  animation: floatGentle 4s infinite ease-in-out;
+}
+
+/* Wax Seal Shimmer */
+@keyframes sealShimmer {
+  0% {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  }
+  50% {
+    filter: drop-shadow(0 6px 14px rgba(223, 186, 115, 0.45));
+  }
+  100% {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  }
+}
+
+.seal-shimmer {
+  animation: sealShimmer 2.5s infinite ease-in-out;
+}
+
+/* Mandala Slow Rotation */
+@keyframes rotateMandala {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-mandala-slow {
+  animation: rotateMandala 90s linear infinite;
+  transform-origin: center center;
+}
+
+/* Card Shine Effect */
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 20%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 235, 184, 0.3) 50%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  animation: cardShineSweep 6s infinite ease-in-out;
+}
+
+@keyframes cardShineSweep {
+  0%, 70% {
+    left: -60%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+

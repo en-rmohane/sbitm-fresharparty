@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#3A1019">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}Sanskriti 2026 – Digital Freshers Invitation &amp; Faculty Blessings{% endblock %}</title>
+
+  <!-- Google Fonts: Cinzel, Playfair Display, Poppins, Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Sanskriti Design System CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Golden Embers Particle Background -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg sanskriti-navbar sticky-top">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('departments.landing') }}">
+        <img src="{{ url_for('static', filename='images/logo/sanskriti_logo.svg') }}" alt="Sanskriti 2026 Logo">
+      </a>
+
+      <button class="navbar-toggler border-0 text-gold" type="button" data-bs-toggle="collapse" data-bs-target="#sanskritiNav" aria-controls="sanskritiNav" aria-expanded="false" aria-label="Toggle navigation">
+        <i data-lucide="menu" style="color: #C6A15B;"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="sanskritiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'departments.landing' %}active{% endif %}" href="{{ url_for('departments.landing') }}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'departments.invitation' %}active{% endif %}" href="{{ url_for('departments.invitation') }}">Invitation Card</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'departments.department_universe' %}active{% endif %}" href="{{ url_for('departments.department_universe') }}">Department Universe</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'approvals.approval_journey' %}active{% endif %}" href="{{ url_for('approvals.approval_journey') }}">Approval Journey</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'approvals.blessings_wall' %}active{% endif %}" href="{{ url_for('approvals.blessings_wall') }}">Blessings Wall</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'approvals.live_dashboard' %}active{% endif %}" href="{{ url_for('approvals.live_dashboard') }}">Live Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-gold {% if request.endpoint == 'approvals.grand_finale' %}active{% endif %}" href="{{ url_for('approvals.grand_finale') }}">
+              <i data-lucide="sparkles" class="d-inline-block align-middle me-1" style="width: 16px;"></i>Grand Finale
+            </a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center justify-content-center gap-2 mt-3 mt-lg-0">
+          {% if current_user.is_authenticated %}
+            {% if current_user.is_admin %}
+              <a href="{{ url_for('admin.dashboard') }}" class="btn btn-gold btn-sm">
+                <i data-lucide="shield" style="width: 15px;"></i> Admin Panel
+              </a>
+            {% else %}
+              <a href="{{ url_for('coordinator.dashboard') }}" class="btn btn-gold btn-sm">
+                <i data-lucide="smartphone" style="width: 15px;"></i> Collect Blessings
+              </a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-gold-outline btn-sm" title="Log Out">
+              <i data-lucide="log-out" style="width: 15px;"></i>
+            </a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-gold-outline btn-sm">
+              <i data-lucide="log-in" style="width: 15px;"></i> Coordinator Login
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages Section -->
+  <div class="container mt-3 content-relative">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show festive-card text-cream p-3 mb-3 border-gold" role="alert">
+            <div class="d-flex align-items-center gap-2">
+              <i data-lucide="bell" style="color: #C6A15B; width: 18px;"></i>
+              <div>{{ message }}</div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Dynamic Page Content -->
+  <main class="content-relative">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Royal Festive Footer -->
+  <footer class="content-relative mt-5 pt-5 pb-4 border-top border-gold" style="background: rgba(30, 7, 12, 0.95);">
+    <div class="container text-center">
+      <div class="d-inline-flex align-items-center gap-3 mb-3">
+        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" alt="Diya" style="width: 32px; height: 26px;" class="flicker-flame">
+        <span class="heading-cinzel text-gold fs-5 fw-bold letter-spacing-2">SANSKRITI 2026</span>
+        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" alt="Diya" style="width: 32px; height: 26px;" class="flicker-flame">
+      </div>
+      
+      <p class="text-cream opacity-75 small mb-1">
+        Shri Balaji Institute of Technology &amp; Management • Annual Digital Freshers Welcome
+      </p>
+      <p class="text-gold-light opacity-50 small mb-3">
+        "New Beginnings, Beautiful Connections, Endless Memories."
+      </p>
+
+      <div class="d-flex flex-wrap justify-content-center gap-3 my-3">
+        <a href="{{ url_for('departments.invitation') }}" class="text-cream text-decoration-none small hover-gold">Digital Card</a>
+        <span class="text-gold opacity-50">•</span>
+        <a href="{{ url_for('departments.department_universe') }}" class="text-cream text-decoration-none small hover-gold">Departments</a>
+        <span class="text-gold opacity-50">•</span>
+        <a href="{{ url_for('approvals.blessings_wall') }}" class="text-cream text-decoration-none small hover-gold">Faculty Blessings</a>
+        <span class="text-gold opacity-50">•</span>
+        <a href="{{ url_for('reports.index') }}" class="text-cream text-decoration-none small hover-gold">Reports &amp; Summaries</a>
+        <span class="text-gold opacity-50">•</span>
+        <a href="{{ url_for('auth.login') }}" class="text-cream text-decoration-none small hover-gold">Portal Access</a>
+      </div>
+
+      <div class="border-top border-gold opacity-25 my-3 pt-3"></div>
+      
+      <p class="small text-cream opacity-50 mb-0">
+        Designed &amp; Developed with Royal Indian Festive Aesthetics • © 2026 Sanskriti Committee. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Sanskriti Core Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+

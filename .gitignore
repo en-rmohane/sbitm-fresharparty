@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database files
+instance/*.db
+*.sqlite3
+
+# Uploads
+uploads/signatures/*
+uploads/selfies/*
+!uploads/signatures/.gitkeep
+!uploads/selfies/.gitkeep
+
+# Environment and secrets
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
