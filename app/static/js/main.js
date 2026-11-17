@@ -198,8 +198,140 @@ const FestiveAudio = {
     } catch (e) {
       // safe fallback
     }
+  },
+
+  // Freshers Party Celebration Dhol Beats Rhythmic Synthesizer
+  partyAudioCtx: null,
+  partyLoopTimer: null,
+  isPartyPlaying: false,
+
+  togglePartyBeats(btnElement) {
+    if (this.isPartyPlaying) {
+      this.stopPartyBeats(btnElement);
+    } else {
+      this.startPartyBeats(btnElement);
+    }
+  },
+
+  startPartyBeats(btnElement) {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      this.partyAudioCtx = new AudioContext();
+      this.isPartyPlaying = true;
+
+      if (btnElement) {
+        btnElement.innerHTML = '<i data-lucide="volume-2" style="width: 16px;"></i> Party Beats ON 🎵';
+        btnElement.classList.add('party-btn-pulse');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+
+      // 8-beat energetic rhythmic loop (Bhangra / Bollywood party groove)
+      let beatStep = 0;
+      const playStep = () => {
+        if (!this.isPartyPlaying || !this.partyAudioCtx) return;
+        const now = this.partyAudioCtx.currentTime;
+
+        // Bass drum thump (Dhama) on beats 0, 2, 4, 6
+        if (beatStep % 2 === 0) {
+          const osc = this.partyAudioCtx.createOscillator();
+          const gain = this.partyAudioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(110, now);
+          osc.frequency.exponentialRampToValueAtTime(45, now + 0.15);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(this.partyAudioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        }
+
+        // Treble slap (Tilli sharp roll)
+        if (beatStep % 2 === 1 || beatStep === 7) {
+          const oscT = this.partyAudioCtx.createOscillator();
+          const gainT = this.partyAudioCtx.createGain();
+          oscT.type = 'triangle';
+          oscT.frequency.setValueAtTime(320, now);
+          oscT.frequency.exponentialRampToValueAtTime(180, now + 0.08);
+          gainT.gain.setValueAtTime(0.2, now);
+          gainT.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          oscT.connect(gainT);
+          gainT.connect(this.partyAudioCtx.destination);
+          oscT.start(now);
+          oscT.stop(now + 0.1);
+        }
+
+        beatStep = (beatStep + 1) % 8;
+      };
+
+      this.partyLoopTimer = setInterval(playStep, 175); // ~170 BPM high energy tempo!
+
+      // Trigger party confetti burst
+      triggerPartyCelebration();
+
+    } catch (e) {
+      console.warn('Audio synthesis issue:', e);
+    }
+  },
+
+  stopPartyBeats(btnElement) {
+    this.isPartyPlaying = false;
+    if (this.partyLoopTimer) {
+      clearInterval(this.partyLoopTimer);
+      this.partyLoopTimer = null;
+    }
+    if (this.partyAudioCtx) {
+      try { this.partyAudioCtx.close(); } catch(e){}
+      this.partyAudioCtx = null;
+    }
+    if (btnElement) {
+      btnElement.innerHTML = '<i data-lucide="music" style="width: 16px;"></i> Play Party Beats';
+      btnElement.classList.remove('party-btn-pulse');
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
   }
 };
+
+/* ==========================================================================
+   Full Screen Multi-Color Freshers Party Confetti Cannon
+   ========================================================================== */
+function triggerPartyCelebration() {
+  if (typeof confetti === 'function') {
+    const partyColors = ['#FFD700', '#FF4081', '#FF6D00', '#00E676', '#00B0FF', '#FFF8EB', '#9C27B0'];
+
+    // Big central burst
+    confetti({
+      particleCount: 80,
+      spread: 120,
+      origin: { y: 0.6 },
+      colors: partyColors,
+      shapes: ['circle', 'square']
+    });
+
+    // Left party cannon
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 80,
+        origin: { x: 0, y: 0.7 },
+        colors: partyColors
+      });
+    }, 180);
+
+    // Right party cannon
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 80,
+        origin: { x: 1, y: 0.7 },
+        colors: partyColors
+      });
+    }, 360);
+  }
+}
 
 /* ==========================================================================
    Share Invitation Helper

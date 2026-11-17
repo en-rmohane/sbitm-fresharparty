@@ -1,28 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}{{ event.title }} – Grand Digital Invitation Experience{% endblock %}
+{% block title %}{{ event.title }} – The Ultimate Freshers Celebration &amp; Party Experience{% endblock %}
 
 {% block content %}
+<!-- Concert Spotlights / Party Laser Beams -->
+<div class="party-spotlight-left"></div>
+<div class="party-spotlight-right"></div>
+
 <div class="hero-landing">
   <div class="container text-center">
 
-    <!-- Top Diya Badge -->
-    <div class="mb-4" data-aos="fade-down">
-      <span class="diya-badge">
-        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" alt="Diya" class="flicker-flame">
-        {{ event.college_short_name }} Presents Sanskriti 2026
-        <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" alt="Diya" class="flicker-flame">
+    <!-- Freshers Hype Banner -->
+    <div class="mb-3">
+      <span class="badge px-3 py-2 text-uppercase letter-spacing-2 party-strobe-badge" style="background: linear-gradient(90deg, #D97732 0%, #C6A15B 50%, #E53935 100%); color: #FFF; font-weight: 800; font-size: 0.85rem; border: 1.5px solid #FFEBB8;">
+        🔥 THE ULTIMATE FRESHERS BASH 2026 • SBITM CAMPUS CELEBRATION 🔥
       </span>
     </div>
 
     <!-- College Name & Welcome Subtitle -->
-    <h5 class="text-gold letter-spacing-3 text-uppercase mb-2 heading-cinzel">
+    <h5 class="text-gold letter-spacing-3 text-uppercase mb-1 heading-cinzel">
       {{ event.college_name }}
     </h5>
+    <h1 class="gold-gradient-text heading-cinzel display-4 fw-bold mb-3">
+      FRESHERS PARTY 2026
+    </h1>
+    <p class="text-cream opacity-90 mx-auto mb-4" style="max-width: 650px; font-size: 1.1rem;">
+      ✨ Beats, Glamour, Friends &amp; Unforgettable Memories! The stage is set to welcome our newest engineering stars! ✨
+    </p>
 
     <!-- Central Cinematic 3D Envelope Experience -->
     <div class="envelope-stage my-4">
-      <div class="envelope-wrapper" id="invitationEnvelope" title="Click to Open Your Royal Invitation">
+      <div class="envelope-wrapper" id="invitationEnvelope" title="Click to Open Your Royal Freshers Party Invitation">
         <!-- Flap -->
         <div class="envelope-flap"></div>
         
@@ -39,13 +47,13 @@
           <div class="ornament-corner-br"></div>
 
           <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
-            <span class="text-saffron text-uppercase small letter-spacing-2 fw-bold mb-1 devanagari-font">॥ शुभ आरम्भ ॥</span>
+            <span class="party-pill-tag mb-1">🎉 VIP INVITATION 🎉</span>
             <h4 class="gold-gradient-text heading-cinzel fw-bold mb-1">FRESHERS PARTY 2026</h4>
             <p class="text-dark small fst-italic mb-2" style="font-family: 'Playfair Display', serif;">
-              "New Beginnings, Beautiful Connections, Endless Memories"
+              "New Beginnings, Endless Music &amp; Lifetime Connections"
             </p>
-            <div class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-3 py-1 small">
-              {{ event.event_date }} • {{ event.event_time }}
+            <div class="badge bg-danger text-white border border-warning px-3 py-1 small fw-bold">
+              🗓️ {{ event.event_date }} • ⏰ {{ event.event_time }}
             </div>
           </div>
         </div>
@@ -55,11 +63,19 @@
       </div>
     </div>
 
-    <!-- Interactive Envelope Trigger Button -->
-    <div class="mb-5">
-      <button id="openInvitationBtn" class="btn btn-gold btn-lg px-4 py-3 pulse-gold">
+    <!-- Interactive Envelope Trigger & Party Buttons -->
+    <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
+      <button id="openInvitationBtn" class="btn btn-gold btn-lg px-4 py-3 party-btn-pulse">
         <i data-lucide="mail-open" style="width: 22px;"></i>
         OPEN YOUR INVITATION
+      </button>
+
+      <button type="button" class="btn btn-gold-outline btn-lg px-4 py-3" onclick="FestiveAudio.togglePartyBeats(this)">
+        <i data-lucide="music" style="width: 20px;"></i> Play Party Beats 🎵
+      </button>
+
+      <button type="button" class="btn btn-maroon btn-lg px-4 py-3" onclick="triggerPartyCelebration()">
+        <i data-lucide="sparkles" style="width: 20px;"></i> Blast Confetti! 🎉
       </button>
     </div>
 
@@ -78,13 +94,11 @@
               <div class="ornament-corner-br" style="width: 48px; height: 48px;"></div>
 
               <div class="d-inline-flex align-items-center gap-2 mb-2">
-                <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 32px;" class="flicker-flame">
-                <span class="text-saffron fw-bold letter-spacing-2 small devanagari-font">॥ ॐ श्री गणेशाय नमः ॥</span>
-                <img src="{{ url_for('static', filename='images/decorations/diya.svg') }}" style="width: 32px;" class="flicker-flame">
+                <span class="party-pill-tag">✨ OFFICIAL FRESHERS GALA ✨</span>
               </div>
 
               <p class="heading-cinzel text-uppercase text-gold fw-bold mb-1 letter-spacing-3">
-                YOU ARE CORDIALLY INVITED
+                YOU ARE CORDIALLY INVITED TO CELEBRATE
               </p>
 
               <h1 class="gold-gradient-text heading-cinzel display-5 fw-bold my-2">
@@ -144,7 +158,7 @@
                   <i data-lucide="download" style="width: 16px;"></i> Download Card PDF
                 </a>
                 <button onclick="shareInvitation('{{ event.title }}', '{{ event.tagline }}', window.location.href)" class="btn btn-gold">
-                  <i data-lucide="share-2" style="width: 16px;"></i> Share Invitation
+                  <i data-lucide="share-2" style="width: 16px;"></i> Share With Batchmates
                 </button>
               </div>
 
@@ -155,7 +169,7 @@
           <div class="festive-card p-4 text-center mb-5">
             <h5 class="heading-cinzel text-gold text-uppercase letter-spacing-2 mb-2">
               <i data-lucide="clock" class="d-inline-block align-middle me-2" style="width: 18px;"></i>
-              COUNTDOWN TO CELEBRATION
+              COUNTDOWN TO THE BIG BASH
             </h5>
             
             <div class="countdown-container" id="eventCountdown" data-event-date="{{ event.event_date }} {{ event.event_time }}">
@@ -196,6 +210,204 @@
     </div>
 
   </div>
+</div>
+
+<!-- =========================================================================
+     FRESHERS PARTY ATTRACTIONS & EVENT HIGHLIGHTS SECTION
+     ========================================================================= -->
+<div class="container py-5 content-relative">
+
+  <div class="text-center mb-5">
+    <span class="party-pill-tag mb-2">🔥 NON-STOP ENTERTAINMENT 🔥</span>
+    <h2 class="gold-gradient-text heading-cinzel display-5 fw-bold mb-2">
+      FRESHERS PARTY HIGHLIGHTS
+    </h2>
+    <p class="text-cream opacity-80 mx-auto" style="max-width: 650px;">
+      Get ready for an electrifying night packed with thumping beats, dazzling lights, fashion ramp walks, and unforgettable memories!
+    </p>
+  </div>
+
+  <!-- Party Attractions Grid -->
+  <div class="row g-4 mb-5">
+    
+    <!-- Attraction 1: DJ Night & EDM Dance Floor -->
+    <div class="col-md-6 col-lg-4">
+      <div class="party-highlight-card h-100">
+        <div class="party-icon-circle">🎧</div>
+        <span class="party-pill-tag mb-2">Main Stage</span>
+        <h4 class="heading-cinzel text-gold fw-bold mb-2">DJ Night &amp; Laser Floor</h4>
+        <p class="text-cream opacity-80 small mb-3">
+          Turn up the volume! High-octane electronic dance floor, dynamic laser beams, and heart-pumping Bollywood &amp; Punjabi drops till you drop!
+        </p>
+        <div class="small text-gold-light fw-bold">
+          ⚡ Featuring Guest DJ • Concert Sound
+        </div>
+      </div>
+    </div>
+
+    <!-- Attraction 2: Mr. & Ms. Fresher 2026 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="party-highlight-card h-100">
+        <div class="party-icon-circle">👑</div>
+        <span class="party-pill-tag mb-2">Contest &amp; Glory</span>
+        <h4 class="heading-cinzel text-gold fw-bold mb-2">Mr. &amp; Ms. Fresher</h4>
+        <p class="text-cream opacity-80 small mb-3">
+          The ultimate ramp-walk, wit, elegance &amp; talent showdown! Who will claim the glorious crowns and become the faces of Sanskriti 2026?
+        </p>
+        <div class="small text-gold-light fw-bold">
+          🏆 Cash Prizes • Royal Sashes &amp; Crowns
+        </div>
+      </div>
+    </div>
+
+    <!-- Attraction 3: Dance Battles & Cultural Flashmob -->
+    <div class="col-md-6 col-lg-4">
+      <div class="party-highlight-card h-100">
+        <div class="party-icon-circle">💃</div>
+        <span class="party-pill-tag mb-2">Live Showdown</span>
+        <h4 class="heading-cinzel text-gold fw-bold mb-2">Dance Battles &amp; Band</h4>
+        <p class="text-cream opacity-80 small mb-3">
+          Sensational acoustic live bands, hip-hop face-offs, fusion choreography, and energetic senior-junior dance mashups!
+        </p>
+        <div class="small text-gold-light fw-bold">
+          🎸 Live Rock Band • Flashmob Thrill
+        </div>
+      </div>
+    </div>
+
+    <!-- Attraction 4: 360 Photo Booth & Red Carpet -->
+    <div class="col-md-6 col-lg-4">
+      <div class="party-highlight-card h-100">
+        <div class="party-icon-circle">📸</div>
+        <span class="party-pill-tag mb-2">Memories</span>
+        <h4 class="heading-cinzel text-gold fw-bold mb-2">360° Red Carpet Booth</h4>
+        <p class="text-cream opacity-80 small mb-3">
+          Pose like a celebrity! Rotating 360-degree slow-mo video platform, polaroid photo walls, and aesthetic neon selfie zones.
+        </p>
+        <div class="small text-gold-light fw-bold">
+          ✨ Instant Digital Video Download
+        </div>
+      </div>
+    </div>
+
+    <!-- Attraction 5: Royal Feast & Mocktail Lounge -->
+    <div class="col-md-6 col-lg-4">
+      <div class="party-highlight-card h-100">
+        <div class="party-icon-circle">🍽️</div>
+        <span class="party-pill-tag mb-2">Gourmet</span>
+        <h4 class="heading-cinzel text-gold fw-bold mb-2">Gala Feast &amp; Mocktails</h4>
+        <p class="text-cream opacity-80 small mb-3">
+          A lavish celebration banquet with multi-cuisine live food counters, sparkling mocktails, dessert fountains, and sweet celebrations!
+        </p>
+        <div class="small text-gold-light fw-bold">
+          🍹 Live Mocktail Bar • Royal Dinner
+        </div>
+      </div>
+    </div>
+
+    <!-- Attraction 6: Fun Titles & Spot Prizes -->
+    <div class="col-md-6 col-lg-4">
+      <div class="party-highlight-card h-100">
+        <div class="party-icon-circle">🎁</div>
+        <span class="party-pill-tag mb-2">Entertainment</span>
+        <h4 class="heading-cinzel text-gold fw-bold mb-2">Fun Titles &amp; Spot Prizes</h4>
+        <p class="text-cream opacity-80 small mb-3">
+          Exciting titles like Best Dressed, Photogenic Icon, Rockstar of the Batch, and surprise gifts for energetic crowd participation!
+        </p>
+        <div class="small text-gold-light fw-bold">
+          ⭐ 15+ Custom Titles &amp; Badges
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Party Schedule / Day Timeline Section -->
+  <div class="party-dj-banner my-5">
+    <div class="text-center mb-4">
+      <span class="party-pill-tag mb-2">🗓️ EVENT TIMELINE • 19 NOVEMBER 2026</span>
+      <h3 class="heading-cinzel text-gold fw-bold mb-1">
+        THE FRESHERS PARTY SCHEDULE
+      </h3>
+      <p class="text-cream opacity-75 small">
+        Mark your watches! Here is your step-by-step itinerary for the greatest day of your freshers year.
+      </p>
+    </div>
+
+    <div class="row g-3 justify-content-center">
+      
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(30, 8, 14, 0.85); border: 1px solid var(--border-gold);">
+          <div class="party-schedule-time">10:00 AM</div>
+          <div>
+            <h6 class="text-gold-light fw-bold mb-0">Red Carpet Arrival &amp; Royal Welcome</h6>
+            <span class="small text-muted">Auspicious Tilak, Welcome Badges &amp; 360° Photo Session</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(30, 8, 14, 0.85); border: 1px solid var(--border-gold);">
+          <div class="party-schedule-time">11:00 AM</div>
+          <div>
+            <h6 class="text-gold-light fw-bold mb-0">Inaugural Lamp Lighting &amp; Faculty Address</h6>
+            <span class="small text-muted">Vedic Invocations &amp; Blessings from Respected Professors</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(30, 8, 14, 0.85); border: 1px solid var(--border-gold);">
+          <div class="party-schedule-time">01:00 PM</div>
+          <div>
+            <h6 class="text-gold-light fw-bold mb-0">Mr. &amp; Ms. Fresher Ramp Walk (Round 1 &amp; 2)</h6>
+            <span class="small text-muted">Fashion Showcase, Introduction &amp; Witty Q&amp;A Round</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(30, 8, 14, 0.85); border: 1px solid var(--border-gold);">
+          <div class="party-schedule-time">03:00 PM</div>
+          <div>
+            <h6 class="text-gold-light fw-bold mb-0">Cultural Extravaganza &amp; Dance Battles</h6>
+            <span class="small text-muted">Live Acoustic Bands, Western Dance &amp; Drama Showcases</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(30, 8, 14, 0.85); border: 1px solid var(--border-gold);">
+          <div class="party-schedule-time">05:00 PM</div>
+          <div>
+            <h6 class="text-gold-light fw-bold mb-0">Grand Crowning Ceremony &amp; Gala Dinner</h6>
+            <span class="small text-muted">Awarding Mr. &amp; Ms. Fresher 2026 followed by Royal Feast</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(30, 8, 14, 0.85); border: 1px solid var(--border-gold);">
+          <div class="party-schedule-time" style="color: #FF7043; border-color: #FF7043;">06:00 PM+</div>
+          <div>
+            <h6 class="text-warning fw-bold mb-0">⚡ DJ Night &amp; Open Dance Floor Bash</h6>
+            <span class="small text-muted">Live EDM, Bollywood Remixes &amp; Non-stop Dancing!</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Dress Code Banner -->
+    <div class="mt-4 pt-3 text-center border-top border-gold border-opacity-25">
+      <span class="text-gold fw-bold text-uppercase small letter-spacing-2">👔 OFFICIAL PARTY DRESS CODE:</span>
+      <p class="text-cream mb-0 mt-1 small">
+        <strong class="text-gold-light">Gentlemen:</strong> Traditional Kurta-Pajama, Nehru Jacket, or Sharp Suits &amp; Blazers<br>
+        <strong class="text-gold-light">Ladies:</strong> Royal Sarees, Anarkalis, Lehengas, or Indo-Western Glamour
+      </p>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 

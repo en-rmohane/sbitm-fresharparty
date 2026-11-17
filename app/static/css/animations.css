@@ -124,3 +124,112 @@
   }
 }
 
+/* ==========================================================================
+   Freshers Party Energetic Keyframes & Lighting
+   ========================================================================== */
+
+/* Concert Spotlight Sweeps */
+@keyframes partyLaserLeft {
+  0%, 100% {
+    transform: rotate(-35deg) scaleY(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: rotate(15deg) scaleY(1.3);
+    opacity: 0.65;
+  }
+}
+
+@keyframes partyLaserRight {
+  0%, 100% {
+    transform: rotate(35deg) scaleY(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: rotate(-15deg) scaleY(1.3);
+    opacity: 0.65;
+  }
+}
+
+.party-spotlight-left {
+  position: absolute;
+  top: -100px;
+  left: 10%;
+  width: 140px;
+  height: 800px;
+  background: linear-gradient(180deg, rgba(223, 186, 115, 0.45) 0%, rgba(217, 119, 50, 0.2) 60%, transparent 100%);
+  filter: blur(25px);
+  transform-origin: top center;
+  pointer-events: none;
+  animation: partyLaserLeft 7s infinite ease-in-out;
+  z-index: 0;
+}
+
+.party-spotlight-right {
+  position: absolute;
+  top: -100px;
+  right: 10%;
+  width: 140px;
+  height: 800px;
+  background: linear-gradient(180deg, rgba(255, 75, 120, 0.35) 0%, rgba(198, 161, 91, 0.25) 60%, transparent 100%);
+  filter: blur(25px);
+  transform-origin: top center;
+  pointer-events: none;
+  animation: partyLaserRight 8s infinite ease-in-out;
+  z-index: 0;
+}
+
+/* Party Badge Strobe */
+@keyframes partyBadgeStrobe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(217, 119, 50, 0.5), inset 0 0 8px rgba(255, 235, 184, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 140, 0, 0.9), inset 0 0 16px rgba(255, 255, 255, 0.8);
+  }
+}
+
+.party-strobe-badge {
+  animation: partyBadgeStrobe 1.8s infinite ease-in-out;
+}
+
+/* Party Pulse Ring for Buttons */
+@keyframes partyRingPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(223, 186, 115, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(223, 186, 115, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(223, 186, 115, 0);
+  }
+}
+
+.party-btn-pulse {
+  animation: partyRingPulse 2s infinite;
+}
+
+/* Floating Music Notes & Confetti */
+@keyframes floatingNotes {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-12px) rotate(8deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.9;
+  }
+}
+
+.floating-icon {
+  display: inline-block;
+  animation: floatingNotes 3s infinite ease-in-out;
+}
+
