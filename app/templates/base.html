@@ -49,13 +49,7 @@
             <a class="nav-link {% if request.endpoint == 'departments.department_universe' %}active{% endif %}" href="{{ url_for('departments.department_universe') }}">Department Universe</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'approvals.approval_journey' %}active{% endif %}" href="{{ url_for('approvals.approval_journey') }}">Approval Journey</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'approvals.blessings_wall' %}active{% endif %}" href="{{ url_for('approvals.blessings_wall') }}">Blessings Wall</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'approvals.live_dashboard' %}active{% endif %}" href="{{ url_for('approvals.live_dashboard') }}">Live Dashboard</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-gold {% if request.endpoint == 'approvals.grand_finale' %}active{% endif %}" href="{{ url_for('approvals.grand_finale') }}">

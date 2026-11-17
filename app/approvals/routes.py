@@ -223,48 +223,13 @@ def blessings_wall():
 
 @approvals_bp.route('/journey')
 def approval_journey():
-    event = get_active_event()
-    departments = Department.query.order_by(Department.name).all()
-    total_departments = len(departments)
-    total_faculty = Faculty.query.filter_by(is_active=True).count()
-    approved_count = Approval.query.filter_by(event_id=event.id, status='approved').count() if event else 0
-    pending_count = max(0, total_faculty - approved_count)
-    completion_pct = round((approved_count / total_faculty * 100), 1) if total_faculty > 0 else 0
-
-    return render_template(
-        'approvals/approval_journey.html',
-        event=event,
-        departments=departments,
-        total_departments=total_departments,
-        total_faculty=total_faculty,
-        approved_count=approved_count,
-        pending_count=pending_count,
-        completion_pct=completion_pct
-    )
+    # Hidden from public access per user request
+    return redirect(url_for('departments.landing'))
 
 @approvals_bp.route('/dashboard')
 def live_dashboard():
-    event = get_active_event()
-    total_departments = Department.query.count()
-    total_faculty = Faculty.query.filter_by(is_active=True).count()
-    total_coordinators = Faculty.query.count()  # will be coordinator query
-    approved_count = Approval.query.filter_by(event_id=event.id, status='approved').count() if event else 0
-    pending_count = max(0, total_faculty - approved_count)
-    completion_pct = round((approved_count / total_faculty * 100), 1) if total_faculty > 0 else 0
-
-    recent_approvals = Approval.query.filter_by(event_id=event.id, status='approved').order_by(Approval.approval_time.desc()).limit(8).all() if event else []
-
-    return render_template(
-        'approvals/live_dashboard.html',
-        event=event,
-        total_departments=total_departments,
-        total_faculty=total_faculty,
-        total_coordinators=Department.query.count(),
-        approved_count=approved_count,
-        pending_count=pending_count,
-        completion_pct=completion_pct,
-        recent_approvals=recent_approvals
-    )
+    # Hidden from public access per user request
+    return redirect(url_for('departments.landing'))
 
 @approvals_bp.route('/api/stats')
 def api_stats():

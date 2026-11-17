@@ -44,8 +44,6 @@ class Sanskriti2026TestCase(unittest.TestCase):
             '/invitation',
             '/departments',
             '/approvals/blessings-wall',
-            '/approvals/journey',
-            '/approvals/dashboard',
             '/approvals/grand-finale',
             '/approvals/api/stats',
             '/reports/',
@@ -54,7 +52,13 @@ class Sanskriti2026TestCase(unittest.TestCase):
         for ep in endpoints:
             response = self.client.get(ep)
             self.assertEqual(response.status_code, 200, f"Endpoint {ep} failed with status {response.status_code}")
-        print("[OK] All public endpoints return HTTP 200.")
+
+        # Hidden endpoints should redirect to landing page
+        for hidden_ep in ['/approvals/journey', '/approvals/dashboard']:
+            res = self.client.get(hidden_ep)
+            self.assertEqual(res.status_code, 302, f"Hidden endpoint {hidden_ep} should redirect (302)")
+
+        print("[OK] Public endpoints return HTTP 200 and hidden pages redirect properly.")
 
     def test_03_pdf_generation(self):
         pdf_endpoints = [
