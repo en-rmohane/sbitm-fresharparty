@@ -44,7 +44,6 @@ class Sanskriti2026TestCase(unittest.TestCase):
             '/invitation',
             '/departments',
             '/approvals/blessings-wall',
-            '/approvals/grand-finale',
             '/approvals/api/stats',
             '/reports/',
             '/auth/login'
@@ -54,7 +53,7 @@ class Sanskriti2026TestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200, f"Endpoint {ep} failed with status {response.status_code}")
 
         # Hidden endpoints should redirect to landing page
-        for hidden_ep in ['/approvals/journey', '/approvals/dashboard']:
+        for hidden_ep in ['/approvals/journey', '/approvals/dashboard', '/approvals/grand-finale']:
             res = self.client.get(hidden_ep)
             self.assertEqual(res.status_code, 302, f"Hidden endpoint {hidden_ep} should redirect (302)")
 

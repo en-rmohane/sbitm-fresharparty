@@ -262,27 +262,8 @@ def api_stats():
 
 @approvals_bp.route('/grand-finale')
 def grand_finale():
-    event = get_active_event()
-    departments = Department.query.order_by(Department.name).all()
-    total_departments = len(departments)
-    total_faculty = Faculty.query.filter_by(is_active=True).count()
-    total_approved = Approval.query.filter_by(event_id=event.id, status='approved').count() if event else 0
-    pending_count = max(0, total_faculty - total_approved)
-    completion_pct = round((total_approved / total_faculty * 100), 1) if total_faculty > 0 else 0
-
-    is_completed = (total_faculty > 0 and total_approved >= total_faculty)
-
-    return render_template(
-        'approvals/grand_finale.html',
-        event=event,
-        departments=departments,
-        total_departments=total_departments,
-        total_faculty=total_faculty,
-        total_approved=total_approved,
-        pending_count=pending_count,
-        completion_pct=completion_pct,
-        is_completed=is_completed
-    )
+    # Hidden from public access per user request
+    return redirect(url_for('departments.landing'))
 
 # Secure File Serving Handlers (supports both file disk & in-database base64 for Vercel)
 @approvals_bp.route('/file/signature/<int:approval_id>')
